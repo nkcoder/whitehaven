@@ -1,4 +1,6 @@
-## STS role for Github Actions
+## Github Actions Configuration
+
+### Create an STS role for Github Actions
 
 Permissions:
 ```json
@@ -48,12 +50,12 @@ Trust relationships:
         {
             "Effect": "Allow",
             "Principal": {
-                "Federated": "arn:aws:iam::360683066129:oidc-provider/token.actions.githubusercontent.com"
+                "Federated": "arn:aws:iam::123456780000:oidc-provider/token.actions.githubusercontent.com"
             },
             "Action": "sts:AssumeRoleWithWebIdentity",
             "Condition": {
                 "StringEquals": {
-                    "token.actions.githubusercontent.com:sub": "repo:viva-leisure/keepme-integration:environment:dev",
+                    "token.actions.githubusercontent.com:sub": "repo:nkcoder/whitehaven:environment:dev",
                     "token.actions.githubusercontent.com:aud": "sts.amazonaws.com"
                 }
             }
@@ -61,3 +63,22 @@ Trust relationships:
     ]
 }
 ```
+
+**Notes**
+- The format of `token.actions.githubusercontent.com:sub`: "repo:<owner>/<repo>:environment:<environment>"
+
+### Add a Identity Provider
+
+- Provider type: OpenID Connect
+- Provider URL: https://token.actions.githubusercontent.com
+- Audience: sts.amazonaws.com
+
+## Create a S3 deployment bucket
+
+We configured the deployment bucket in `serverless.yml`:
+```json
+  deploymentBucket:
+    name: whiteheaven-deployment-bucket-${self:provider.stage}
+```
+
+We need to create 
