@@ -1,9 +1,9 @@
 # "org" ensures this Service is used with the correct Serverless Framework Access Key.
-org: dj2024
+org: danieltesting
 # "app" enables Serverless Framework Dashboard features and sharing them with other Services.
-app: whiteheaven
+app: whitehaven
 # "service" is the name of this project. This will also be added to your AWS resource names.
-service: whiteheaven
+service: whitehaven
 
 provider:
   name: aws
