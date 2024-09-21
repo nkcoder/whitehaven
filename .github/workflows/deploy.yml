@@ -15,30 +15,6 @@ on:
         description: "The branch to deploy"
         required: true
         type: string
-      member_table:
-        description: "Member table name"
-        required: true
-        type: string
-      contract_table:
-        description: "Contract table name"
-        required: true
-        type: string
-      suspension_table:
-        description: "Suspension table name"
-        required: true
-        type: string
-      prospect_table:
-        description: "Prospect table name"
-        required: true
-        type: string
-      webhook_member_url:
-        description: "Webhook member URL"
-        required: true
-        type: string
-      webhook_prospect_url:
-        description: "Webhook prospect URL"
-        required: true
-        type: string
 
 jobs:
   deploy:
@@ -77,11 +53,11 @@ jobs:
       - name: Deploy Lambda
         run: serverless deploy --stage ${{ inputs.environment }}
         env:
-          MEMBER_TABLE: ${{ inputs.member_table }}
-          CONTRACT_TABLE: ${{ inputs.contract_table }}
-          SUSPENSION_TABLE: ${{ inputs.suspension_table }}
-          PROSPECT_TABLE: ${{ inputs.prospect_table }}
-          WEBHOOK_MEMBER_URL: ${{ inputs.webhook_member_url }}
-          WEBHOOK_PROSPECT_URL: ${{ inputs.webhook_prospect_url }}
+          MEMBER_TABLE: ${{ secrets.member_table }}
+          CONTRACT_TABLE: ${{ secrets.contract_table }}
+          SUSPENSION_TABLE: ${{ secrets.suspension_table }}
+          PROSPECT_TABLE: ${{ secrets.prospect_table }}
+          WEBHOOK_MEMBER_URL: ${{ secrets.webhook_member_url }}
+          WEBHOOK_PROSPECT_URL: ${{ secrets.webhook_prospect_url }}
           AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
           SERVERLESS_ACCESS_KEY: ${{ secrets.SERVERLESS_ACCESS_KEY }}

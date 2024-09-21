@@ -27,10 +27,4 @@ jobs:
       environment: prod
       aws_region: ap-southeast-2
       branch: main
-      member_table: "Member-k5r5hyaijzgszl2xs5ysna5urq-prod"
-      contract_table: "MemberContract-k5r5hyaijzgszl2xs5ysna5urq-prod"
-      suspension_table: "MemberContractSuspension-k5r5hyaijzgszl2xs5ysna5urq-prod"
-      prospect_table: "Prospect-k5r5hyaijzgszl2xs5ysna5urq-prod"
-      webhook_member_url: "https://product.keepme.ai/integrations/plusfitness/updates/h7KpSrf23JbZx"
-      webhook_prospect_url: "https://product.keepme.ai/integrations/plusfitness/leads/enpOYW1nZXpGOHFkR2p"
     secrets: inherit

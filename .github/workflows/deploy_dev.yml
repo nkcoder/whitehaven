@@ -16,10 +16,4 @@ jobs:
       environment: dev
       aws_region: ap-southeast-2
       branch: ${{ github.event.pull_request.head.ref }}
-      member_table: "Member-jyq7cvj6s5cw3dpsd6pvprmfbu-amritnew"
-      contract_table: "MemberContract-jyq7cvj6s5cw3dpsd6pvprmfbu-amritnew"
-      suspension_table: "MemberContractSuspension-jyq7cvj6s5cw3dpsd6pvprmfbu-amritnew"
-      prospect_table: "Prospect-jyq7cvj6s5cw3dpsd6pvprmfbu-amritnew"
-      webhook_member_url: ""
-      webhook_prospect_url: ""
     secrets: inherit
