@@ -53,11 +53,11 @@ jobs:
       - name: Deploy Lambda
         run: serverless deploy --stage ${{ inputs.environment }}
         env:
-          MEMBER_TABLE: ${{ secrets.member_table }}
-          CONTRACT_TABLE: ${{ secrets.contract_table }}
-          SUSPENSION_TABLE: ${{ secrets.suspension_table }}
-          PROSPECT_TABLE: ${{ secrets.prospect_table }}
-          WEBHOOK_MEMBER_URL: ${{ secrets.webhook_member_url }}
-          WEBHOOK_PROSPECT_URL: ${{ secrets.webhook_prospect_url }}
+          MEMBER_TABLE: ${{ vars.member_table }}
+          CONTRACT_TABLE: ${{ vars.contract_table }}
+          SUSPENSION_TABLE: ${{ vars.suspension_table }}
+          PROSPECT_TABLE: ${{ vars.prospect_table }}
+          WEBHOOK_MEMBER_URL: ${{ vars.webhook_member_url }}
+          WEBHOOK_PROSPECT_URL: ${{ vars.webhook_prospect_url }}
           AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
           SERVERLESS_ACCESS_KEY: ${{ secrets.SERVERLESS_ACCESS_KEY }}
