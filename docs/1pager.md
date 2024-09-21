@@ -48,7 +48,7 @@ Trust relationships:
         {
             "Effect": "Allow",
             "Principal": {
-                "Federated": "arn:aws:iam::360683066129:oidc-provider/token.actions.githubusercontent.com"
+                "Federated": "arn:aws:iam::123456780000:oidc-provider/token.actions.githubusercontent.com"
             },
             "Action": "sts:AssumeRoleWithWebIdentity",
             "Condition": {
