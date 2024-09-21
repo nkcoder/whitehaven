@@ -9,6 +9,10 @@ on:
       - ready_for_review
       - assigned
 
+permissions:
+  id-token: write
+  contents: read
+
 jobs:
   deploy_to_dev:
     uses: ./.github/workflows/deploy.yml
