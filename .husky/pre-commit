@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+
+. "$(dirname -- "$0")/_/husky.sh"
+
+npm run format
+
+#npm run lint
+
+npm run test
+
+# Check if there are any changes
+if git diff --cached --quiet; then
+    echo "No changes to commit."
+else
+    echo "Changes were made by the pre-commit hook. Staging them..."
+    git add .
+fi
+
+# Proceed with the commit
+exit  0

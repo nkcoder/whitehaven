@@ -1,0 +1,62 @@
+# "org" ensures this Service is used with the correct Serverless Framework Access Key.
+org: dj2024
+# "app" enables Serverless Framework Dashboard features and sharing them with other Services.
+app: whiteheaven
+# "service" is the name of this project. This will also be added to your AWS resource names.
+service: whiteheaven
+
+provider:
+  name: aws
+  runtime: nodejs20.x
+  stage: ${opt:stage}
+  region: ap-southeast-2
+  stackName: whiteheaven-stack-${self:provider.stage}
+  deploymentMethod: direct
+  disableRollback: false
+
+  iam:
+    role:
+      name: whiteheaven-lambda-task-role
+      statements:
+        - Effect: Allow
+          Action:
+            - dynamodb:Query
+            - dynamodb:Scan
+            - dynamodb:GetItem
+          Resource: "*"
+
+  environment:
+    MEMBER_TABLE: ${env:MEMBER_TABLE}
+    CONTRACT_TABLE: ${env:CONTRACT_TABLE}
+    SUSPENSION_TABLE: ${env:SUSPENSION_TABLE}
+    PROSPECT_TABLE: ${env:PROSPECT_TABLE}
+    WEBHOOK_MEMBER_URL: ${env:WEBHOOK_MEMBER_URL}
+    WEBHOOK_PROSPECT_URL: ${env:WEBHOOK_PROSPECT_URL}
+    AWS_ACCOUNT_ID: ${env:AWS_ACCOUNT_ID}
+    ENV: ${self:provider.stage}
+
+  deploymentPrefix: whiteheaven-serverless
+  deploymentBucket:
+    name: whiteheaven-deployment-bucket-${self:provider.stage}
+    blockPublicAccess: true
+    serverSideEncryption: AES256
+    versioning: true
+    maxPreviousDeploymentArtifacts: 3
+
+functions:
+  memberChange:
+    handler: src/index.handler
+    events:
+      - sqs:
+          arn: arn:aws:sqs:ap-southeast-2:${env:AWS_ACCOUNT_ID}:member_update_for_keepme_queue.fifo
+          maximumConcurrency: 200
+          batchSize: 3
+
+custom:
+  prune:
+    automatic: true
+    includeLayers: true
+    number: 3
+
+plugins:
+  - serverless-prune-plugin

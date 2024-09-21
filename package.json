@@ -1,0 +1,40 @@
+{
+  "name": "whitehaven",
+  "version": "1.0.0",
+  "description": "This project includes a AWS Lambda function, which consumes messages from AWS SQS, get data from AWS DynamoDB, then notify remote systems by calling a webhook API.",
+  "main": "index.js",
+  "scripts": {
+    "start": "sls offline",
+    "build": "tsc",
+    "deploy": "sls deploy",
+    "prune": "sls prune",
+    "remove": "sls remove",
+    "format": "prettier --write .",
+    "test": "vitest run",
+    "test_ui": "vitest --ui",
+    "coverage": "vitest run --coverage",
+    "prepare": "husky"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@aws-sdk/client-dynamodb": "^3.656.0",
+    "@aws-sdk/lib-dynamodb": "^3.656.0",
+    "@types/aws-lambda": "^8.10.145",
+    "aws-lambda": "^1.0.7",
+    "change-case": "^5.4.4",
+    "date-fns": "^4.1.0",
+    "ky": "^1.7.2",
+    "prettier": "^3.3.3",
+    "purify-ts": "^2.1.0",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@vitest/ui": "^2.1.1",
+    "globals": "^15.9.0",
+    "husky": "^9.1.6",
+    "typescript": "^5.6.2",
+    "vitest": "^2.1.1"
+  }
+}

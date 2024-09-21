@@ -1,0 +1,24 @@
+{
+  "Records": [
+    {
+      "messageId": "5fed2fcd-239e-48e8-8918-3e55427e648a",
+      "receiptHandle": "AQEBscGz8O4uoXwuj2LiJER5hVY1QYCT51pXlREFIzvYIB7VSmPrA4zSg8UVx/O40qm63XmVy5br1DqB2S7IfADJGvNDCEiZMo5q5It/q1jE4KK2b+7TTSnzspVzvALicQ0/3352hTLnv+kNNVlR2dz7BoDKKkBZpXIhKhIAC8yYXiqAsvmUcLBD9b5bJH95uvH4XETJWaliG3Sh54aVpR6HtxTb3p3whOR5jymrztj2qrXqx3itFtR6kbJqwST9YNKIP0FxwaUtr+HsLf5jJqH9W4q7hZPaKLvv92TF3o9GW+Qjpb0bK1VvsAw6ceVhCcZa",
+      "body": "{\n  \"Type\" : \"Notification\",\n  \"MessageId\" : \"c75cce3c-15c4-5001-b0f3-917a057c4e91\",\n  \"SequenceNumber\" : \"10000000000000026000\",\n  \"TopicArn\" : \"arn:aws:sns:ap-southeast-2:360683066129:hub_members_change_sns.fifo\",\n  \"Subject\" : \"CANCELLATION_CREATED\",\n  \"Message\" : \"{\\\"memberId\\\":\\\"bc39ca3f-531b-4d20-81bf-8669cb2ed569\\\",\\\"membershipId\\\":\\\"009260ad-fbc5-4e85-af44-e8c9f4730c97\\\",\\\"locationId\\\":\\\"f5403e3b-4dcc-4611-9b60-a639b80ddf11\\\",\\\"brandId\\\":\\\"6dec4e5f-7a07-4a7e-a809-2c0c1df01366\\\"}\",\n  \"Timestamp\" : \"2024-08-26T05:11:20.098Z\",\n  \"UnsubscribeURL\" : \"https://sns.ap-southeast-2.amazonaws.com/?Action=Unsubscribe&SubscriptionArn=arn:aws:sns:ap-southeast-2:360683066129:hub_members_change_sns.fifo:39ad5e55-8ea1-45a0-8f85-3e43ade95b6b\",\n  \"MessageAttributes\" : {\n    \"memberEventType\" : {\"Type\":\"String\",\"Value\":\"CANCELLATION_CREATED\"}\n  }\n}",
+      "attributes": {
+        "ApproximateReceiveCount": "1",
+        "AWSTraceHeader": "Root=1-66cc0e74-03ac8e5627c9a78d7098c765;Parent=687d843071cb3a51;Sampled=0;Lineage=7a8b33fc:0",
+        "SentTimestamp": "1724649080210",
+        "SequenceNumber": "37334998311952863232",
+        "MessageGroupId": "bc39ca3f-531b-4d20-81bf-8669cb2ed569",
+        "SenderId": "AIDA4B3L5DHZGA5FAHUSD",
+        "MessageDeduplicationId": "1e54972c0f58832cbd6bb4bdaf705dc692f9b9f5e548b18682dd40028d8993b4",
+        "ApproximateFirstReceiveTimestamp": "1724649080210"
+      },
+      "messageAttributes": {},
+      "md5OfBody": "5068884ef32d3f6a5289730a2f7f67c2",
+      "eventSource": "aws:sqs",
+      "eventSourceARN": "arn:aws:sqs:ap-southeast-2:360683066129:member_update_for_keepme_queue.fifo",
+      "awsRegion": "ap-southeast-2"
+    }
+  ]
+}

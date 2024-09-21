@@ -1,0 +1,87 @@
+name: Deploy Lambda
+
+on:
+  workflow_call:
+    inputs:
+      environment:
+        description: "Environment"
+        required: true
+        type: string
+      aws_region:
+        description: "AWS region"
+        required: true
+        type: string
+      branch:
+        description: "The branch to deploy"
+        required: true
+        type: string
+      member_table:
+        description: "Member table name"
+        required: true
+        type: string
+      contract_table:
+        description: "Contract table name"
+        required: true
+        type: string
+      suspension_table:
+        description: "Suspension table name"
+        required: true
+        type: string
+      prospect_table:
+        description: "Prospect table name"
+        required: true
+        type: string
+      webhook_member_url:
+        description: "Webhook member URL"
+        required: true
+        type: string
+      webhook_prospect_url:
+        description: "Webhook prospect URL"
+        required: true
+        type: string
+
+jobs:
+  deploy:
+    name: Deploy - ${{ inputs.environment }}
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.branch }}
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20.x"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run tests
+        run: npm run test
+
+      - name: Install Serverless
+        run: npm install -g serverless
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-region: ${{ inputs.aws_region }}
+          role-to-assume: ${{ secrets.AWS_STS_ROLE }}
+
+      - name: Deploy Lambda
+        run: serverless deploy --stage ${{ inputs.environment }}
+        env:
+          MEMBER_TABLE: ${{ inputs.member_table }}
+          CONTRACT_TABLE: ${{ inputs.contract_table }}
+          SUSPENSION_TABLE: ${{ inputs.suspension_table }}
+          PROSPECT_TABLE: ${{ inputs.prospect_table }}
+          WEBHOOK_MEMBER_URL: ${{ inputs.webhook_member_url }}
+          WEBHOOK_PROSPECT_URL: ${{ inputs.webhook_prospect_url }}
+          AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
+          SERVERLESS_ACCESS_KEY: ${{ secrets.SERVERLESS_ACCESS_KEY }}
