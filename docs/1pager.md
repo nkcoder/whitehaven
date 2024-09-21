@@ -2,7 +2,7 @@
 
 ### Create an STS role for Github Actions
 
-Permissions:
+Permissions example:
 ```json
 {
     "Version": "2012-10-17",
@@ -42,7 +42,7 @@ Permissions:
 }
 ```
 
-Trust relationships:
+Trust relationships example:
 ```json
 {
     "Version": "2012-10-17",
@@ -73,7 +73,20 @@ Trust relationships:
 - Provider URL: https://token.actions.githubusercontent.com
 - Audience: sts.amazonaws.com
 
-## Create a S3 deployment bucket
+## Trouble shooting
+
+### Error: The specified bucket does not exist
+
+Error message:
+```
+Deploying "whitehaven" to stage "prod" (ap-southeast-2)
+✖ Stack whiteheaven-stack-prod failed to deploy (3s)
+✖ ServerlessError2: Could not locate deployment bucket: "whiteheaven-deployment-bucket-prod". Error: The specified bucket does not exist
+    at AwsDeploy.ensureValidBucketExists (file:///home/runner/.serverless/releases/4.4.0/package/dist/sf-core.js:714:26611)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async aws:deploy:deploy:checkForChanges (file:///home/runner/.serverless/releases/4.4.0/package/dist/sf-core.js:725:4471)
+...
+```
 
 We configured the deployment bucket in `serverless.yml`:
 ```json
@@ -81,4 +94,5 @@ We configured the deployment bucket in `serverless.yml`:
     name: whiteheaven-deployment-bucket-${self:provider.stage}
 ```
 
-We need to create 
+If **Serverless** didn't create the bucket automatically, we might need to create it manually.
+
