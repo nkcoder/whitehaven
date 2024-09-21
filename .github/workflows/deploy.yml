@@ -59,4 +59,5 @@ jobs:
           WEBHOOK_MEMBER_URL: ${{ vars.WEBHOOK_MEMBER_URL }}
           WEBHOOK_PROSPECT_URL: ${{ vars.WEBHOOK_PROSPECT_URL }}
           AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
+          AWS_REGION: ${{ inputs.aws_region }}
           SERVERLESS_ACCESS_KEY: ${{ secrets.SERVERLESS_ACCESS_KEY }}
