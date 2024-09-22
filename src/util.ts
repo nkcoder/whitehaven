@@ -1,6 +1,6 @@
 import * as changeCase from "change-case";
 
-type PlainObject = { [key: string]: any };
+type PlainObject = { [key: string]: any } | null | undefined | number | string | boolean;
 
 const convertKeysToSnakeCase = (obj: PlainObject): PlainObject => {
   if (typeof obj !== "object" || obj === null) {

@@ -1,12 +1,10 @@
-import { describe, it, expect, beforeEach, vi } from "vitest";
-import { handler } from "../src/index";
-import { callMemberWebhook } from "../src/webhook";
-import { EitherAsync } from "purify-ts";
 import { SQSEvent } from "aws-lambda";
-import { ApiContract, ApiMember, Message } from "../src/schema";
+import { EitherAsync } from "purify-ts";
+import { beforeEach, describe, expect, it, vi } from "vitest";
+import { handler } from "../src/index";
 import { memberEventType } from "../src/memberEventTypes";
+import { Message } from "../src/schema";
 import { processMessage } from "../src/service";
-import { M } from "vitest/dist/chunks/reporters.C_zwCd4j";
 
 // Mock the dependencies
 vi.mock("../src/webhook");

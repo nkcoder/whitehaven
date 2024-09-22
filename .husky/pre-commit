@@ -4,9 +4,7 @@
 
 npm run format
 
-#npm run lint
-
-npm run test
+npm run test_coverage
 
 # Check if there are any changes
 if git diff --cached --quiet; then

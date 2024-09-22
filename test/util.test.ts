@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { convertKeysToSnakeCase } from "../src/util";
+import { convertKeysToSnakeCase, PlainObject } from "../src/util";
 
 describe("convertKeysToSnakeCase", () => {
   it("should convert flat object keys to snake_case", () => {
@@ -22,5 +22,12 @@ describe("convertKeysToSnakeCase", () => {
 
   it("should handle empty objects", () => {
     expect(convertKeysToSnakeCase({})).toEqual({});
+  });
+
+  it("should return the input if it is not an object", () => {
+    expect(convertKeysToSnakeCase(null)).toBeNull();
+    expect(convertKeysToSnakeCase(42)).toBe(42);
+    expect(convertKeysToSnakeCase("string")).toBe("string");
+    expect(convertKeysToSnakeCase(true)).toBe(true);
   });
 });
