@@ -31,11 +31,10 @@ provider:
     PROSPECTS_TABLE: ${env:PROSPECTS_TABLE}
     WEBHOOK_MEMBER_URL: ${env:WEBHOOK_MEMBER_URL}
     WEBHOOK_PROSPECT_URL: ${env:WEBHOOK_PROSPECT_URL}
-    AWS_ACCOUNT_ID: ${env:AWS_ACCOUNT_ID}
     ENV: ${self:provider.stage}
 
   deploymentBucket:
-    name: whiteheaven-deployment-bucket-${self:provider.stage}
+    name: whiteheaven-deployment-bucket-${self:provider.region}-${self:provider.stage}
     blockPublicAccess: true
     serverSideEncryption: AES256
     versioning: true
@@ -46,7 +45,7 @@ functions:
     handler: src/index.handler
     events:
       - sqs:
-          arn: arn:aws:sqs:${env:AWS_REGION}:${env:AWS_ACCOUNT_ID}:whiteheaven_member_change_${self:provider.stage}.fifo
+          arn: ${env:SQS_ARN}
           maximumConcurrency: 200
           batchSize: 3
 
