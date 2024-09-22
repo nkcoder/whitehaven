@@ -1,11 +1,4 @@
-import {
-  dbMemberSchema,
-  DbMember,
-  dbContractSchema,
-  DbContract,
-  DbProspect,
-  dbProspectSchema
-} from "./schema";
+import { dbMemberSchema, DbMember, dbContractSchema, DbContract, DbProspect, dbProspectSchema } from "./schema";
 import { EitherAsync, Maybe } from "purify-ts";
 import { getClient } from "./dynamodbClient";
 import { GetCommand, QueryCommand } from "@aws-sdk/lib-dynamodb";

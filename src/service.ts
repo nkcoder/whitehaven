@@ -110,8 +110,8 @@ const processMessage = (message: Message): EitherAsync<Error, string> => {
 
   return message.eventType === memberEventType.MEMBER_PROSPECT
     ? Maybe.fromNullable(message.prospectId)
-      .map(handleProspect)
-      .orDefault(EitherAsync.liftEither(Left(new Error("ProspectId is missing in the message"))))
+        .map(handleProspect)
+        .orDefault(EitherAsync.liftEither(Left(new Error("ProspectId is missing in the message"))))
     : handleMember();
 };
 
