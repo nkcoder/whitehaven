@@ -1,9 +1,8 @@
 import { DynamoDBDocumentClient, GetCommand, QueryCommand } from "@aws-sdk/lib-dynamodb";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { getContracts, getMember } from "../src/database";
 import { getClient } from "../src/dynamodbClient";
-import { contractSchema, dbContractSchema, dbMemberSchema, dbSuspensionSchema, memberSchema } from "../src/schema";
-import { getDataForKeepMe } from "../src/service";
-import { getActiveSuspensions, getContracts, getMember } from "../src/database";
+import { dbContractSchema, dbMemberSchema } from "../src/schema";
 
 vi.mock("../src/dynamodbClient");
 
@@ -141,64 +140,4 @@ describe("storage", () => {
     });
   });
 
-  describe("getActiveSuspensions", () => {
-    const mockSuspensions = [
-      {
-        id: "s111",
-        memberContractId: "id111",
-        memberId: "123",
-        suspensionStartDateTime: "2021-01-01T00:00:00Z",
-        suspensionEndDateTime: "2021-02-01T00:00:00Z",
-        cancelledDateTime: null
-      }
-    ];
-
-    it("should retrieve active suspensions", async () => {
-      process.env.SUSPENSION_TABLE = "suspension";
-
-      const mockQueryClient = {
-        send: vi.fn().mockImplementation((command: QueryCommand) => Promise.resolve({ Items: mockSuspensions }))
-      } as unknown as DynamoDBDocumentClient;
-
-      vi.mocked(getClient).mockReturnValue(mockQueryClient);
-
-      const result = await getActiveSuspensions("id111").run();
-
-      expect(result.isRight()).toBe(true);
-      expect(result.extract()).toEqual(mockSuspensions.map(suspension => dbSuspensionSchema.parse(suspension)));
-    });
-
-    it("should return empty if active suspensions are not found", async () => {
-      const mockQueryClient = {
-        send: vi.fn().mockImplementation((command: QueryCommand) => {
-          return Promise.resolve({ Items: [] });
-        })
-      } as unknown as DynamoDBDocumentClient;
-
-      vi.mocked(getClient).mockReturnValue(mockQueryClient);
-
-      const result = await getActiveSuspensions("id111");
-
-      expect(result.isRight()).toBe(true);
-      expect(result.extract()).toEqual([]);
-    });
-
-    it("should return an error if there is an error retrieving active suspensions", async () => {
-      const mockQueryClient = {
-        send: vi.fn().mockImplementation((command: QueryCommand) => {
-          throw new Error("Error retrieving active suspensions");
-        })
-      } as unknown as DynamoDBDocumentClient;
-
-      vi.mocked(getClient).mockReturnValue(mockQueryClient);
-
-      const result = await getActiveSuspensions("id111");
-
-      expect(result.isLeft()).toBe(true);
-      const errorMessage = result.leftOrDefault(new Error()).message;
-      expect(errorMessage).toEqual(
-        "Error retrieving active suspensions for contractId id111: Error: Error retrieving active suspensions"
-      );
-    });
-  });
 });

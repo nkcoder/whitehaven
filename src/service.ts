@@ -16,7 +16,7 @@ import {
   memberStatusSchema,
   Message
 } from "./schema";
-import { getActiveSuspensions, getContracts, getMember, getProspect } from "./database";
+import { getContracts, getMember, getProspect } from "./database";
 import { callMemberWebhook, callProspectWebhook } from "./webhook";
 
 const getMemberDataForKeepMe = (memberId: string): EitherAsync<Error, KeepMeMemberData> => {
@@ -33,11 +33,9 @@ const transformToContractApi = async (contracts: DbContract[]): Promise<ApiContr
   return await Promise.all(
     contracts.map(async contract => {
       const expired = isContractExpired(contract.expiryDateTime, contract.endDateTime);
-      const suspensions = await getActiveSuspensions(contract.id).map(suspensions => suspensions.length > 0);
 
       const status = (() => {
         if (expired) return contractStatusSchema.enum.cancelled;
-        if (suspensions.orDefault(false)) return contractStatusSchema.enum.suspended;
         return contractStatusSchema.enum.active;
       })();
       return apiContractSchema.parse({ ...contract, status });
@@ -112,8 +110,8 @@ const processMessage = (message: Message): EitherAsync<Error, string> => {
 
   return message.eventType === memberEventType.MEMBER_PROSPECT
     ? Maybe.fromNullable(message.prospectId)
-        .map(handleProspect)
-        .orDefault(EitherAsync.liftEither(Left(new Error("ProspectId is missing in the message"))))
+      .map(handleProspect)
+      .orDefault(EitherAsync.liftEither(Left(new Error("ProspectId is missing in the message"))))
     : handleMember();
 };
 

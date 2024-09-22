@@ -1,6 +1,4 @@
 import {
-  DbSuspension,
-  dbSuspensionSchema,
   dbMemberSchema,
   DbMember,
   dbContractSchema,
@@ -72,37 +70,6 @@ const getContracts = (memberId: string): EitherAsync<Error, DbContract[]> => {
   });
 };
 
-const getActiveSuspensions = (contractId: string): EitherAsync<Error, DbSuspension[]> => {
-  const suspensionTable = process.env.SUSPENSION_TABLE;
-  return EitherAsync(async ({ throwE }) => {
-    try {
-      const queryCommand = new QueryCommand({
-        TableName: suspensionTable,
-        IndexName: "byMemberContractId",
-        KeyConditionExpression: "memberContractId = :contractId",
-        FilterExpression:
-          "suspensionStartDateTime < :now AND (suspensionEndDateTime > :now OR suspensionEndDateTime = :null) AND (attribute_not_exists(cancelledDateTime) OR cancelledDateTime = :null)",
-        ExpressionAttributeValues: {
-          ":contractId": contractId,
-          ":now": new Date().toISOString(),
-          ":null": null
-        },
-        ProjectionExpression:
-          "id, memberContractId, memberId, suspensionStartDateTime, suspensionEndDateTime, cancelledDateTime"
-      });
-
-      const result = await getClient().send(queryCommand);
-      console.log(`Retrieved active suspensions result: ${JSON.stringify(result)}`);
-      return Maybe.fromNullable(result.Items)
-        .map(items => items.map(suspension => dbSuspensionSchema.parse(suspension)))
-        .orDefaultLazy(() => []);
-    } catch (error) {
-      console.error(`Error retrieving active suspensions for contractId ${contractId}: ${error}`);
-      return throwE(new Error(`Error retrieving active suspensions for contractId ${contractId}: ${error}`));
-    }
-  });
-};
-
 const getProspect = (prospectId: string): EitherAsync<Error, DbProspect> => {
   const prospectTable = process.env.PROSPECT_TABLE;
 
@@ -136,4 +103,4 @@ const getProspect = (prospectId: string): EitherAsync<Error, DbProspect> => {
   });
 };
 
-export { getMember, getContracts, getActiveSuspensions, getProspect };
+export { getMember, getContracts, getProspect };

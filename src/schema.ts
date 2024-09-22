@@ -63,16 +63,6 @@ type DbContract = z.infer<typeof dbContractSchema>;
 type ApiContract = z.infer<typeof apiContractSchema>;
 type ContractStatus = z.infer<typeof contractStatusSchema>;
 
-const dbSuspensionSchema = z.object({
-  id: z.string(),
-  memberContractId: z.string(),
-  memberId: z.string().nullish(),
-  suspensionStartDateTime: z.string().datetime(),
-  suspensionEndDateTime: z.string().datetime().nullish().default(null),
-  cancelledDateTime: z.string().datetime().nullish().default(null)
-});
-type DbSuspension = z.infer<typeof dbSuspensionSchema>;
-
 const keepMeMemberDataSchema = z.object({
   member: apiMemberSchema,
   contracts: z.array(apiContractSchema)
@@ -131,8 +121,6 @@ export {
   contractSchema,
   Contract,
   ContractStatus,
-  dbSuspensionSchema,
-  DbSuspension,
   keepMeMemberDataSchema,
   KeepMeMemberData,
   contractStatusSchema,

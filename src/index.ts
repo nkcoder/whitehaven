@@ -4,7 +4,7 @@ import { Message, messageSchema } from "./schema";
 import { processMessage } from "./service";
 
 /**
- * Check `sqs_event_sample.json` for the structure of the event
+ * Check `docs/sqs_event_sample.json` for the structure of the event
  *
  * @param event
  * @returns
