@@ -1,4 +1,4 @@
-const memberEventType = Object.freeze({
+const eventTypes = Object.freeze({
   MEMBER_JOINED: "MEMBER_JOINED",
   MEMBER_BLOCKED: "MEMBER_BLOCKED",
   MEMBER_UNBLOCKED: "MEMBER_UNBLOCKED",
@@ -8,4 +8,4 @@ const memberEventType = Object.freeze({
   CANCELLATION_REVOKED: "CANCELLATION_REVOKED"
 });
 
-export { memberEventType };
+export { eventTypes };

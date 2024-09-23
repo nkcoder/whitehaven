@@ -4,7 +4,7 @@ import { getContracts, getMember, getProspect } from "../src/database";
 import { DbContract, DbMember, DbProspect, Message } from "../src/schema";
 import { processMessage } from "../src/service";
 import { callMemberWebhook, callProspectWebhook } from "../src/webhook";
-import { memberEventType } from "../src/memberEventTypes";
+import { eventTypes } from "../src/eventTypes";
 
 describe("processMessage", () => {
   vi.mock("../src/database.ts");
@@ -142,7 +142,7 @@ describe("processMessage", () => {
     );
 
     const message = {
-      eventType: memberEventType.MEMBER_OVERDUE,
+      eventType: eventTypes.MEMBER_OVERDUE,
       memberId: "12345"
     } as Message;
     const result = await processMessage(message).run();
@@ -194,7 +194,7 @@ describe("processMessage", () => {
     );
 
     const message = {
-      eventType: memberEventType.MEMBER_OVERDUE,
+      eventType: eventTypes.MEMBER_OVERDUE,
       memberId: "12345"
     } as Message;
     const result = await processMessage(message).run();
@@ -204,7 +204,7 @@ describe("processMessage", () => {
 
   it("should return an error if member is not found", async () => {
     const message = {
-      eventType: memberEventType.MEMBER_OVERDUE,
+      eventType: eventTypes.MEMBER_OVERDUE,
       memberId: "not-exist-id"
     } as Message;
 

@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
 import { callMemberWebhook, callProspectWebhook } from "../src/webhook";
 import { ApiContract, ApiMember, KeepMeMemberData, KeepmeProspectData } from "../src/schema";
-import { memberEventType } from "../src/memberEventTypes";
+import { eventTypes } from "../src/eventTypes";
 import ky from "ky";
 import { convertKeysToSnakeCase } from "../src/util";
 
@@ -49,13 +49,13 @@ describe("webhook", () => {
       const mockResponse = { ok: true, json: vi.fn().mockResolvedValue({ success: true }) };
       vi.mocked(ky.post).mockResolvedValue(mockResponse as any);
 
-      const result = await callMemberWebhook(mockMemberData, memberEventType.MEMBER_JOINED).run();
+      const result = await callMemberWebhook(mockMemberData, eventTypes.MEMBER_JOINED).run();
 
       expect(result.isRight()).toBe(true);
       expect(ky.post).toHaveBeenCalledWith(mockMemberWebhookUrl, {
         json: {
           type: "joiner",
-          description: memberEventType.MEMBER_JOINED,
+          description: eventTypes.MEMBER_JOINED,
           data: convertKeysToSnakeCase(mockMemberData)
         }
       });
@@ -65,13 +65,13 @@ describe("webhook", () => {
       const mockResponse = { ok: true, json: vi.fn().mockResolvedValue({ success: true }) };
       vi.mocked(ky.post).mockResolvedValue(mockResponse as any);
 
-      const result = await callMemberWebhook(mockMemberData, memberEventType.CANCELLATION_CREATED).run();
+      const result = await callMemberWebhook(mockMemberData, eventTypes.CANCELLATION_CREATED).run();
 
       expect(result.isRight()).toBe(true);
       expect(ky.post).toHaveBeenCalledWith(mockMemberWebhookUrl, {
         json: {
           type: "status-update",
-          description: memberEventType.CANCELLATION_CREATED,
+          description: eventTypes.CANCELLATION_CREATED,
           data: convertKeysToSnakeCase(mockMemberData)
         }
       });
@@ -81,7 +81,7 @@ describe("webhook", () => {
       const mockResponse = { ok: false, statusText: "Internal Server Error" };
       vi.mocked(ky.post).mockResolvedValue(mockResponse as any);
 
-      const result = await callMemberWebhook(mockMemberData, memberEventType.MEMBER_JOINED).run();
+      const result = await callMemberWebhook(mockMemberData, eventTypes.MEMBER_JOINED).run();
 
       expect(result.isLeft()).toBe(true);
       expect(result.leftOrDefault(new Error()).message).toBe("Failed to send webhook: Internal Server Error");
@@ -90,7 +90,7 @@ describe("webhook", () => {
     it("should return an error when WEBHOOK_URL is not set", async () => {
       process.env.WEBHOOK_MEMBER_URL = "";
 
-      const result = await callMemberWebhook(mockMemberData, memberEventType.MEMBER_JOINED).run();
+      const result = await callMemberWebhook(mockMemberData, eventTypes.MEMBER_JOINED).run();
 
       expect(result.isLeft()).toBe(true);
       expect(result.extract().toString()).toBe("Error: Webhook URL is not set");
