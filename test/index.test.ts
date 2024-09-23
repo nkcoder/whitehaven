@@ -2,7 +2,7 @@ import { SQSEvent } from "aws-lambda";
 import { EitherAsync } from "purify-ts";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { handler } from "../src/index";
-import { memberEventType } from "../src/memberEventTypes";
+import { eventTypes } from "../src/eventTypes";
 import { Message } from "../src/schema";
 import { processMessage } from "../src/service";
 
@@ -22,7 +22,7 @@ describe("handler", () => {
           body: JSON.stringify({
             Message: JSON.stringify({
               memberId: "123",
-              eventType: memberEventType.MEMBER_JOINED
+              eventType: eventTypes.MEMBER_JOINED
             })
           })
         }
@@ -33,7 +33,7 @@ describe("handler", () => {
 
     const result = await handler(mockEvent);
 
-    const message: Message = { memberId: "123", eventType: memberEventType.MEMBER_JOINED };
+    const message: Message = { memberId: "123", eventType: eventTypes.MEMBER_JOINED };
     expect(processMessage).toHaveBeenCalledWith(message);
     expect(result).toEqual({
       statusCode: 200,
@@ -49,7 +49,7 @@ describe("handler", () => {
             Message: JSON.stringify({
               prospectId: "456",
               memberId: "123",
-              eventType: memberEventType.MEMBER_PROSPECT
+              eventType: eventTypes.MEMBER_PROSPECT
             })
           })
         }
@@ -60,7 +60,7 @@ describe("handler", () => {
 
     const result = await handler(mockEvent);
 
-    const message: Message = { prospectId: "456", memberId: "123", eventType: memberEventType.MEMBER_PROSPECT };
+    const message: Message = { prospectId: "456", memberId: "123", eventType: eventTypes.MEMBER_PROSPECT };
     expect(processMessage).toHaveBeenCalledWith(message);
     expect(result).toEqual({
       statusCode: 200,
@@ -74,7 +74,7 @@ describe("handler", () => {
         {
           body: JSON.stringify({
             Message: JSON.stringify({
-              eventType: memberEventType.MEMBER_OVERDUE,
+              eventType: eventTypes.MEMBER_OVERDUE,
               memberId: "123"
             })
           })
@@ -95,7 +95,7 @@ describe("handler", () => {
           body: JSON.stringify({
             Message: JSON.stringify({
               memberId: "123",
-              eventType: memberEventType.MEMBER_JOINED
+              eventType: eventTypes.MEMBER_JOINED
             })
           })
         }
@@ -115,7 +115,7 @@ describe("handler", () => {
           body: JSON.stringify({
             Message: JSON.stringify({
               memberId: "123",
-              eventType: memberEventType.MEMBER_JOINED
+              eventType: eventTypes.MEMBER_JOINED
             })
           })
         }

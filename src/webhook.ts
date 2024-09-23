@@ -1,6 +1,6 @@
 import ky from "ky";
 import { EitherAsync, Left, Maybe } from "purify-ts";
-import { memberEventType } from "./memberEventTypes";
+import { eventTypes } from "./eventTypes";
 import { KeepMeMemberData, KeepmeProspectData } from "./schema";
 import { convertKeysToSnakeCase, PlainObject } from "./util";
 
@@ -34,7 +34,7 @@ const sendWebhook = (maybeUrl: Maybe<string>, data: PlainObject): EitherAsync<Er
 
 const callMemberWebhook = (data: KeepMeMemberData, eventType: string): EitherAsync<Error, string> => {
   const maybeUrl = Maybe.fromNullable(process.env.WEBHOOK_MEMBER_URL);
-  const type = eventType === memberEventType.MEMBER_JOINED ? TYPE.JOINER : TYPE.STATUS_UPDATE;
+  const type = eventType === eventTypes.MEMBER_JOINED ? TYPE.JOINER : TYPE.STATUS_UPDATE;
 
   const payload = {
     type: type,

@@ -1,6 +1,6 @@
 import { EitherAsync, Left, Maybe } from "purify-ts";
 import { getEarlierDateTime, toDate, todayDate } from "./datetime";
-import { memberEventType } from "./memberEventTypes";
+import { eventTypes } from "./eventTypes";
 import {
   ApiContract,
   apiContractSchema,
@@ -108,7 +108,7 @@ const processMessage = (message: Message): EitherAsync<Error, string> => {
       return callMemberWebhook(data, message.eventType);
     });
 
-  return message.eventType === memberEventType.MEMBER_PROSPECT
+  return message.eventType === eventTypes.MEMBER_PROSPECT
     ? Maybe.fromNullable(message.prospectId)
         .map(handleProspect)
         .orDefault(EitherAsync.liftEither(Left(new Error("ProspectId is missing in the message"))))
