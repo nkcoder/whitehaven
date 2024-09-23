@@ -1,3 +1,7 @@
+## System Diagram
+
+![Whitehaven diagram](./whitehaven_diagram.png)
+
 ## Github Actions Configuration
 
 ### Create an STS role for Github Actions
