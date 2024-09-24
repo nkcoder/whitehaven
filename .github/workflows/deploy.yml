@@ -61,3 +61,9 @@ jobs:
           AWS_REGION: ${{ inputs.aws_region }}
           SQS_ARN: ${{ vars.SQS_ARN }}
           SERVERLESS_ACCESS_KEY: ${{ secrets.SERVERLESS_ACCESS_KEY }}
+
+      - name: Cleanup
+        run: serverless remove --stage ${{ inputs.environment }}
+        env:
+          SERVERLESS_ACCESS_KEY: ${{ secrets.SERVERLESS_ACCESS_KEY }}
+          AWS_REGION: ${{ inputs.aws_region }}
