@@ -1,3 +1,7 @@
+![CI - dev](https://github.com/nkcoder/whitehaven/actions/workflows/deploy_dev.yml/badge.svg?branch=main)
+
+![CI - prod](https://github.com/nkcoder/whitehaven/actions/workflows/deploy_prod.yml/badge.svg?branch=main)
+
 This project includes a AWS Lambda function, which consumes messages from AWS SQS, gets data from AWS DynamoDB, then notifies remote systems by calling webhook APIs.
 
 The project is deployed to AWS using the [Serverless Framework](https://www.serverless.com/), and pipelined using Github Actions.
