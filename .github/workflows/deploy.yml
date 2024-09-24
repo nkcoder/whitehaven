@@ -61,3 +61,18 @@ jobs:
           AWS_REGION: ${{ inputs.aws_region }}
           SQS_ARN: ${{ vars.SQS_ARN }}
           SERVERLESS_ACCESS_KEY: ${{ secrets.SERVERLESS_ACCESS_KEY }}
+
+      - name: Wait for deployment
+        run: sleep 30
+
+      - name: Cleanup
+        run: serverless remove --stage ${{ inputs.environment }}
+        env:
+          MEMBERS_TABLE: ${{ vars.MEMBERS_TABLE }}
+          CONTRACTS_TABLE: ${{ vars.CONTRACTS_TABLE }}
+          PROSPECTS_TABLE: ${{ vars.PROSPECTS_TABLE }}
+          WEBHOOK_MEMBER_URL: ${{ vars.WEBHOOK_MEMBER_URL }}
+          WEBHOOK_PROSPECT_URL: ${{ vars.WEBHOOK_PROSPECT_URL }}
+          AWS_REGION: ${{ inputs.aws_region }}
+          SQS_ARN: ${{ vars.SQS_ARN }}
+          SERVERLESS_ACCESS_KEY: ${{ secrets.SERVERLESS_ACCESS_KEY }}
