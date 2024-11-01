@@ -1,14 +1,20 @@
 import { EitherAsync, Left } from "purify-ts";
 import { describe, expect, it, vi } from "vitest";
 import { getContracts, getMember, getProspect } from "../src/database";
+import { eventTypes } from "../src/eventTypes";
 import { DbContract, DbMember, DbProspect, Message } from "../src/schema";
 import { processMessage } from "../src/service";
 import { callMemberWebhook, callProspectWebhook } from "../src/webhook";
-import { eventTypes } from "../src/eventTypes";
+import { getClient } from "../src/sqsClient";
+import { SQSClient, SQSClientResolvedConfig } from "@aws-sdk/client-sqs";
 
 describe("processMessage", () => {
   vi.mock("../src/database.ts");
   vi.mock("../src/webhook.ts");
+  vi.mock("../src/sqsClient.ts");
+
+  const eventSourceARN = "test-event-source-arn";
+  const receiptHandle = "test-receipt-handle";
 
   it("should handle prospect messages correctly", async () => {
     const mockProspectData = {
@@ -27,24 +33,32 @@ describe("processMessage", () => {
       state: "ACT",
       createdAt: "2021-01-01T00:00:00Z"
     } as DbProspect;
-    const mockWebhookResponse = "Webhook called successfully";
 
     vi.mocked(getProspect).mockImplementation(() =>
       EitherAsync<Error, DbProspect>(() => Promise.resolve(mockProspectData))
     );
     vi.mocked(callProspectWebhook).mockImplementation(() =>
-      EitherAsync<Error, string>(() => Promise.resolve(mockWebhookResponse))
+      EitherAsync<Error, string>(() => Promise.resolve("Webhook called successfully"))
     );
+
+    const mockSQSClient = {
+      config: {},
+      destroy: vi.fn(),
+      middlewareStack: {},
+      send: vi.fn(),
+      deleteMessage: vi.fn().mockImplementation(() => Promise.resolve())
+    } as unknown as SQSClient;
+    vi.mocked(getClient).mockImplementation(() => mockSQSClient);
 
     const message = {
       eventType: "MEMBER_PROSPECT",
       prospectId: "12345"
     } as Message;
 
-    const result = await processMessage(message).run();
+    const result = await processMessage(message, eventSourceARN, receiptHandle).run();
 
     expect(result.isRight()).toBe(true);
-    expect(result.extract()).toEqual(mockWebhookResponse);
+    expect(result.extract()).toEqual("Messaged is deleted successfully");
   });
 
   it("should return an error if prospect is not found", async () => {
@@ -57,7 +71,7 @@ describe("processMessage", () => {
       EitherAsync<Error, DbProspect>(() => Promise.reject(new Error("Prospect not found")))
     );
 
-    const result = await processMessage(message).run();
+    const result = await processMessage(message, eventSourceARN, receiptHandle).run();
 
     expect(result.isLeft()).toBe(true);
     expect(result).toEqual(Left(new Error("Prospect not found")));
@@ -93,7 +107,7 @@ describe("processMessage", () => {
       EitherAsync<Error, string>(() => Promise.reject(new Error("Webhook failed")))
     );
 
-    const result = await processMessage(message).run();
+    const result = await processMessage(message, eventSourceARN, receiptHandle).run();
     expect(result.isLeft()).toBe(true);
     expect(result.leftOrDefault(new Error()).message).toEqual("Webhook failed");
   });
@@ -140,14 +154,23 @@ describe("processMessage", () => {
     vi.mocked(callMemberWebhook).mockImplementation(() =>
       EitherAsync<Error, string>(() => Promise.resolve(mockWebhookResponse))
     );
+    // mock the sqs client
+    const mockSQSClient = {
+      config: {},
+      destroy: vi.fn(),
+      middlewareStack: {},
+      send: vi.fn(),
+      deleteMessage: vi.fn().mockImplementation(() => Promise.resolve())
+    } as unknown as SQSClient;
+    vi.mocked(getClient).mockImplementation(() => mockSQSClient);
 
     const message = {
       eventType: eventTypes.MEMBER_OVERDUE,
       memberId: "12345"
     } as Message;
-    const result = await processMessage(message).run();
+    const result = await processMessage(message, eventSourceARN, receiptHandle).run();
     expect(result.isRight()).toBe(true);
-    expect(result.extract()).toEqual("Webhook called successfully");
+    expect(result.extract()).toEqual("Messaged is deleted successfully");
   });
 
   it("should handle member messages (with active contracts) correctly", async () => {
@@ -184,6 +207,15 @@ describe("processMessage", () => {
       } as DbContract
     ];
 
+    const mockSQSClient = {
+      config: {},
+      destroy: vi.fn(),
+      middlewareStack: {},
+      send: vi.fn(),
+      deleteMessage: vi.fn().mockImplementation(() => Promise.resolve())
+    } as unknown as SQSClient;
+    vi.mocked(getClient).mockImplementation(() => mockSQSClient);
+
     const mockWebhookResponse = "Webhook called successfully";
     vi.mocked(getMember).mockImplementation(() => EitherAsync<Error, DbMember>(() => Promise.resolve(mockMemberData)));
     vi.mocked(getContracts).mockImplementation(() =>
@@ -197,9 +229,9 @@ describe("processMessage", () => {
       eventType: eventTypes.MEMBER_OVERDUE,
       memberId: "12345"
     } as Message;
-    const result = await processMessage(message).run();
+    const result = await processMessage(message, eventSourceARN, receiptHandle).run();
     expect(result.isRight()).toBe(true);
-    expect(result.extract()).toEqual("Webhook called successfully");
+    expect(result.extract()).toEqual("Messaged is deleted successfully");
   });
 
   it("should return an error if member is not found", async () => {
@@ -212,7 +244,7 @@ describe("processMessage", () => {
       EitherAsync<Error, DbMember>(() => Promise.reject(new Error("Member not found")))
     );
 
-    const result = await processMessage(message).run();
+    const result = await processMessage(message, eventSourceARN, receiptHandle).run();
     expect(result.isLeft()).toBe(true);
     expect(result).toEqual(Left(new Error("Member not found")));
   });

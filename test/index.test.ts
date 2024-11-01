@@ -24,7 +24,9 @@ describe("handler", () => {
               memberId: "123",
               eventType: eventTypes.MEMBER_JOINED
             })
-          })
+          }),
+          eventSourceARN: "test-event-source-arn",
+          receiptHandle: "test-receipt-handle"
         }
       ]
     } as unknown as SQSEvent;
@@ -34,7 +36,7 @@ describe("handler", () => {
     const result = await handler(mockEvent);
 
     const message: Message = { memberId: "123", eventType: eventTypes.MEMBER_JOINED };
-    expect(processMessage).toHaveBeenCalledWith(message);
+    expect(processMessage).toHaveBeenCalledWith(message, "test-event-source-arn", "test-receipt-handle");
     expect(result).toEqual({
       statusCode: 200,
       body: JSON.stringify("All webhook responses successful")
@@ -51,7 +53,9 @@ describe("handler", () => {
               memberId: "123",
               eventType: eventTypes.MEMBER_PROSPECT
             })
-          })
+          }),
+          eventSourceARN: "test-event-source-arn",
+          receiptHandle: "test-receipt-handle"
         }
       ]
     } as unknown as SQSEvent;
@@ -61,7 +65,7 @@ describe("handler", () => {
     const result = await handler(mockEvent);
 
     const message: Message = { prospectId: "456", memberId: "123", eventType: eventTypes.MEMBER_PROSPECT };
-    expect(processMessage).toHaveBeenCalledWith(message);
+    expect(processMessage).toHaveBeenCalledWith(message, "test-event-source-arn", "test-receipt-handle");
     expect(result).toEqual({
       statusCode: 200,
       body: JSON.stringify("All webhook responses successful")

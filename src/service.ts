@@ -1,6 +1,7 @@
 import { EitherAsync, Left, Maybe } from "purify-ts";
 import { getEarlierDateTime, toDate, todayDate } from "./datetime";
 import { eventTypes } from "./eventTypes";
+import { DeleteMessageCommand } from "@aws-sdk/client-sqs";
 import {
   ApiContract,
   apiContractSchema,
@@ -9,22 +10,24 @@ import {
   contractStatusSchema,
   DbContract,
   DbMember,
-  KeepMeMemberData,
-  keepMeMemberDataSchema,
-  KeepmeProspectData,
-  keepMeProspectDataSchema,
+  WebhookMemberData,
+  webhookMemberDataSchema,
+  webhookProspectDataSchema,
+  WebhookProspectData,
   memberStatusSchema,
   Message
 } from "./schema";
 import { getContracts, getMember, getProspect } from "./database";
 import { callMemberWebhook, callProspectWebhook } from "./webhook";
+import { getClient } from "./sqsClient";
+import { getQueueUrlByArn } from "./util";
 
-const getMemberDataForKeepMe = (memberId: string): EitherAsync<Error, KeepMeMemberData> => {
+const getMemberDataForWebhook = (memberId: string): EitherAsync<Error, WebhookMemberData> => {
   return getMember(memberId).ap(
     getContracts(memberId).map((contracts: DbContract[]) => async (member: DbMember) => {
       const apiContracts = await transformToContractApi(contracts);
       const apiMember = transformToApiMember(member, apiContracts);
-      return keepMeMemberDataSchema.parse({ member: apiMember, contracts: apiContracts });
+      return webhookMemberDataSchema.parse({ member: apiMember, contracts: apiContracts });
     })
   );
 };
@@ -69,9 +72,9 @@ const isContractExpired = (expiryDateTime: string | null, endDateTime: string | 
   return expiryDate.map(expiry => expiry <= todayDate).orDefault(false);
 };
 
-const getProspectDataForKeepMe = (prospectId: string): EitherAsync<Error, KeepmeProspectData> => {
+const getProspectDataForWebhook = (prospectId: string): EitherAsync<Error, WebhookProspectData> => {
   return getProspect(prospectId).map(prospect => {
-    const prospectForKeepme = {
+    const prospectForWebhook = {
       venueName: prospect.locationId,
       sourceGroup: "web",
       sourceName: "Abandoned Cart",
@@ -91,28 +94,46 @@ const getProspectDataForKeepMe = (prospectId: string): EitherAsync<Error, Keepme
       suburb: prospect.suburb,
       createdAt: prospect.createdAt
     };
-    return keepMeProspectDataSchema.parse(prospectForKeepme);
+    return webhookProspectDataSchema.parse(prospectForWebhook);
   });
 };
 
-const processMessage = (message: Message): EitherAsync<Error, string> => {
+const processMessage = (
+  message: Message,
+  eventSourceARN: string,
+  receiptHandle: string
+): EitherAsync<Error, string> => {
   const handleProspect = (id: string) =>
-    getProspectDataForKeepMe(id).chain(data => {
-      console.log(`Prospect data for KeepMe before calling webhook: ${JSON.stringify(data)}`);
+    getProspectDataForWebhook(id).chain(data => {
+      console.log(`Prospect data before calling webhook: ${JSON.stringify(data)}`);
       return callProspectWebhook(data);
     });
 
   const handleMember = () =>
-    getMemberDataForKeepMe(message.memberId).chain(data => {
-      console.log(`Member data for KeepMe before calling webhook: ${JSON.stringify(data)}`);
+    getMemberDataForWebhook(message.memberId).chain(data => {
+      console.log(`Member data before calling webhook: ${JSON.stringify(data)}`);
       return callMemberWebhook(data, message.eventType);
     });
 
-  return message.eventType === eventTypes.MEMBER_PROSPECT
-    ? Maybe.fromNullable(message.prospectId)
-        .map(handleProspect)
-        .orDefault(EitherAsync.liftEither(Left(new Error("ProspectId is missing in the message"))))
-    : handleMember();
+  const deleteMessage = async () => {
+    const deleteResponse = await getClient().send(
+      new DeleteMessageCommand({
+        QueueUrl: getQueueUrlByArn(eventSourceARN),
+        ReceiptHandle: receiptHandle
+      })
+    );
+    console.log(`Deleted the message:${JSON.stringify(message)}, response: ${JSON.stringify(deleteResponse)}`);
+    return "Messaged is deleted successfully";
+  };
+
+  const processResponse =
+    message.eventType === eventTypes.MEMBER_PROSPECT
+      ? Maybe.fromNullable(message.prospectId)
+          .map(handleProspect)
+          .orDefault(EitherAsync.liftEither(Left(new Error("ProspectId is missing in the message"))))
+      : handleMember();
+
+  return processResponse.map(async () => deleteMessage());
 };
 
 export { processMessage };

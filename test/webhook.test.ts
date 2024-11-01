@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
 import { callMemberWebhook, callProspectWebhook } from "../src/webhook";
-import { ApiContract, ApiMember, KeepMeMemberData, KeepmeProspectData } from "../src/schema";
+import { ApiContract, ApiMember, WebhookMemberData, WebhookProspectData } from "../src/schema";
 import { eventTypes } from "../src/eventTypes";
 import ky from "ky";
 import { convertKeysToSnakeCase } from "../src/util";
@@ -18,7 +18,7 @@ describe("webhook", () => {
   });
 
   describe("callMemberWebhook", () => {
-    const mockMemberData: KeepMeMemberData = {
+    const mockMemberData: WebhookMemberData = {
       member: {
         memberId: "123",
         homeLocationId: "loc_456",
@@ -112,7 +112,7 @@ describe("webhook", () => {
       email: "test@x.com",
       gender: "Male",
       memberId: "234"
-    } as KeepmeProspectData;
+    } as WebhookProspectData;
 
     it("should successfully call webhook for MEMBER_JOINED event", async () => {
       const mockResponse = { ok: true, json: vi.fn().mockResolvedValue({ success: true }) };

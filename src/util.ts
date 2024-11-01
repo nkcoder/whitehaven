@@ -19,4 +19,9 @@ const convertKeysToSnakeCase = (obj: PlainObject): PlainObject => {
   return obj;
 };
 
-export { convertKeysToSnakeCase, PlainObject };
+const getQueueUrlByArn = (queueArn: string): string => {
+  const [, , , region, accountId, queueName] = queueArn.split(":");
+  return `https://sqs.${region}.amazonaws.com/${accountId}/${queueName}`;
+};
+
+export { convertKeysToSnakeCase, PlainObject, getQueueUrlByArn };
