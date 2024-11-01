@@ -1,6 +1,6 @@
 import { SQSEvent, SQSRecord } from "aws-lambda";
 import { EitherAsync } from "purify-ts";
-import { Message, messageSchema } from "./schema";
+import { Message, messageSchema, sqsRecordBodySchema } from "./schema";
 import { processMessage } from "./service";
 
 /**
@@ -14,12 +14,14 @@ const handler = async (event: SQSEvent) => {
 
   const webhookResponses = event.Records.map((record: SQSRecord) => {
     console.log(`Processing the record: ${JSON.stringify(record)}`);
-    const recordBody = JSON.parse(record.body);
-    const recordMessage = JSON.parse(recordBody.Message);
-    const message: Message = messageSchema.parse(recordMessage);
+    const { body, eventSourceARN, receiptHandle } = record;
+
+    console.log(`Record body: ${body}`);
+    const sqsRecordBody = sqsRecordBodySchema.parse(JSON.parse(body));
+    const message: Message = sqsRecordBody.Message;
     console.log(`Processing the message: ${JSON.stringify(message)}`);
 
-    return processMessage(message);
+    return processMessage(message, eventSourceARN, receiptHandle);
   });
 
   const combined = await EitherAsync.sequence(webhookResponses);

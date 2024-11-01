@@ -18,6 +18,14 @@ The project is deployed to AWS using the [Serverless Framework](https://www.serv
 - [zod](https://zod.dev/): schema validation
 - [ky](https://github.com/sindresorhus/ky): delightful HTTP requests
 
+## Development
+
+Run the tests:
+
+```bash
+auto/test.sh
+```
+
 ## 1Pager
 
 [1Pager](./docs/1pager.md)

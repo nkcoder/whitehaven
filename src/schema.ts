@@ -10,6 +10,20 @@ const messageSchema = z.object({
 });
 type Message = z.infer<typeof messageSchema>;
 
+const sqsRecordBodySchema = z.object({
+  Type: z.string().nullish(),
+  MessageId: z.string().nullish(),
+  SequenceNumber: z.string().nullish(),
+  TopicArn: z.string().nullish(),
+  Timestamp: z.string().nullish(),
+  UnsubscribeURL: z.string().nullish(),
+  Message: z
+    .string()
+    .transform(m => JSON.parse(m))
+    .pipe(messageSchema)
+});
+type SqsRecordBody = z.infer<typeof sqsRecordBodySchema>;
+
 const memberSchema = z.object({
   memberId: z.string(),
   homeLocationId: z.string(),
@@ -63,11 +77,11 @@ type DbContract = z.infer<typeof dbContractSchema>;
 type ApiContract = z.infer<typeof apiContractSchema>;
 type ContractStatus = z.infer<typeof contractStatusSchema>;
 
-const keepMeMemberDataSchema = z.object({
+const webhookMemberDataSchema = z.object({
   member: apiMemberSchema,
   contracts: z.array(apiContractSchema)
 });
-type KeepMeMemberData = z.infer<typeof keepMeMemberDataSchema>;
+type WebhookMemberData = z.infer<typeof webhookMemberDataSchema>;
 
 const prospectSchema = z.object({
   dob: z.string().date(),
@@ -92,7 +106,7 @@ const dbProspectSchema = prospectSchema.extend({
 });
 type DbProspect = z.infer<typeof dbProspectSchema>;
 
-const keepMeProspectDataSchema = prospectSchema.extend({
+const webhookProspectDataSchema = prospectSchema.extend({
   venueName: z.string(),
   sourceGroup: z.string(),
   sourceName: z.string(),
@@ -102,7 +116,7 @@ const keepMeProspectDataSchema = prospectSchema.extend({
   prospectId: z.string(),
   zip: z.string().nullish()
 });
-type KeepmeProspectData = z.infer<typeof keepMeProspectDataSchema>;
+type WebhookProspectData = z.infer<typeof webhookProspectDataSchema>;
 
 export {
   messageSchema,
@@ -121,12 +135,14 @@ export {
   contractSchema,
   Contract,
   ContractStatus,
-  keepMeMemberDataSchema,
-  KeepMeMemberData,
+  webhookMemberDataSchema,
+  WebhookMemberData,
   contractStatusSchema,
   memberStatusSchema,
   dbProspectSchema,
   DbProspect,
-  keepMeProspectDataSchema,
-  KeepmeProspectData
+  webhookProspectDataSchema,
+  WebhookProspectData,
+  SqsRecordBody,
+  sqsRecordBodySchema
 };

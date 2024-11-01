@@ -1,7 +1,7 @@
 import ky from "ky";
 import { EitherAsync, Left, Maybe } from "purify-ts";
 import { eventTypes } from "./eventTypes";
-import { KeepMeMemberData, KeepmeProspectData } from "./schema";
+import { WebhookMemberData, WebhookProspectData } from "./schema";
 import { convertKeysToSnakeCase, PlainObject } from "./util";
 
 const TYPE = Object.freeze({
@@ -10,8 +10,7 @@ const TYPE = Object.freeze({
 });
 
 /**
- * Because KeepMe didn't provide webhook URLs for test environment, so we return Right("WEBHOOK_URL not set"), rather than Left("WEBHOOK_URL not set").
- * Need to convert payload from camel case to snake case.
+ * As requested, need to convert payload from camel case to snake case.
  */
 const sendWebhook = (maybeUrl: Maybe<string>, data: PlainObject): EitherAsync<Error, string> => {
   const payload = convertKeysToSnakeCase(data);
@@ -32,7 +31,7 @@ const sendWebhook = (maybeUrl: Maybe<string>, data: PlainObject): EitherAsync<Er
     .orDefault(EitherAsync.liftEither(Left(new Error("Webhook URL is not set"))));
 };
 
-const callMemberWebhook = (data: KeepMeMemberData, eventType: string): EitherAsync<Error, string> => {
+const callMemberWebhook = (data: WebhookMemberData, eventType: string): EitherAsync<Error, string> => {
   const maybeUrl = Maybe.fromNullable(process.env.WEBHOOK_MEMBER_URL);
   const type = eventType === eventTypes.MEMBER_JOINED ? TYPE.JOINER : TYPE.STATUS_UPDATE;
 
@@ -45,7 +44,7 @@ const callMemberWebhook = (data: KeepMeMemberData, eventType: string): EitherAsy
   return sendWebhook(maybeUrl, payload);
 };
 
-const callProspectWebhook = (data: KeepmeProspectData): EitherAsync<Error, string> => {
+const callProspectWebhook = (data: WebhookProspectData): EitherAsync<Error, string> => {
   const maybeUrl = Maybe.fromNullable(process.env.WEBHOOK_PROSPECT_URL);
   const payload = data;
 
