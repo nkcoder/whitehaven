@@ -1,0 +1,35 @@
+name: Lint and Test
+
+on:
+  workflow_call:
+    inputs:
+      ref:
+        description: "The ref to lint and test"
+        required: true
+        type: string
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  lint_test:
+    runs-on: ubuntu-latest
+    env:
+      NODE_ENV: test
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.ref }}
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "lts/*"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run tests
+        run: npm run test

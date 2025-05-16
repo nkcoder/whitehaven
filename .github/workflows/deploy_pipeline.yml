@@ -1,28 +1,29 @@
-name: Deploy - prod
+name: Deploy Pipeline
 
 on:
   push:
-    branches:
-      - main
-
-permissions:
-  id-token: write
-  contents: read
+    branches: ["main"]
 
 jobs:
+  run_tests:
+    uses: ./.github/workflows/lint_test.yml
+    with:
+      ref: main
+
   deploy_to_dev:
+    needs: run_tests
     uses: ./.github/workflows/deploy.yml
     with:
       environment: dev
       aws_region: ap-southeast-2
-      branch: main
+      ref: main
     secrets: inherit
 
   deploy_to_prod:
-    uses: ./.github/workflows/deploy.yml
     needs: deploy_to_dev
+    uses: ./.github/workflows/deploy.yml
     with:
       environment: prod
-      aws_region: ap-southeast-1
-      branch: main
+      aws_region: ap-southeast-2
+      ref: main
     secrets: inherit

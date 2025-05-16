@@ -1,0 +1,25 @@
+name: Deploy to Dev on Approval
+
+on:
+  pull_request_review:
+    types: [submitted]
+
+jobs:
+  check_review:
+    runs-on: ubuntu-latest
+    if: github.event.review.state == 'approved' && github.event.pull_request.base.ref == 'main'
+    steps:
+      - run: echo "PR was approved, proceeding with tests"
+
+  run_tests:
+    needs: check_review
+    uses: ./.github/workflows/lint_test.yml
+
+  deploy_to_dev:
+    needs: run_tests
+    uses: ./.github/workflows/deploy.yml
+    with:
+      environment: dev
+      aws_region: ap-southeast-2
+      branch: ${{ github.event.pull_request.head.ref }}
+    secrets: inherit
