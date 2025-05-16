@@ -21,5 +21,5 @@ jobs:
     with:
       environment: dev
       aws_region: ap-southeast-2
-      branch: ${{ github.event.pull_request.head.ref }}
+      ref: ${{ github.event.pull_request.head.ref }}
     secrets: inherit

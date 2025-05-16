@@ -8,7 +8,7 @@ jobs:
   run_tests:
     uses: ./.github/workflows/lint_test.yml
     with:
-      ref: main
+      ref: ${{ github.ref_name }}
 
   deploy_to_dev:
     needs: run_tests
@@ -16,7 +16,7 @@ jobs:
     with:
       environment: dev
       aws_region: ap-southeast-2
-      ref: main
+      ref: ${{ github.ref_name }}
     secrets: inherit
 
   deploy_to_prod:
@@ -25,5 +25,5 @@ jobs:
     with:
       environment: prod
       aws_region: ap-southeast-2
-      ref: main
+      ref: ${{ github.ref_name }}
     secrets: inherit

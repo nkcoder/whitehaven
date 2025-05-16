@@ -1,0 +1,14 @@
+name: Validate PR
+
+# This workflow is used to validate a pull request before it is merged into the main branch.
+on:
+  pull_request:
+    branches: [main]
+    types: [opened, synchronize, reopened, ready_for_review]
+
+jobs:
+  lint_test:
+    if: github.event.pull_request.draft == false
+    uses: ./.github/workflows/lint_test.yml
+    with:
+      ref: ${{ github.event.pull_request.head.ref }}
