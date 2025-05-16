@@ -13,6 +13,9 @@ jobs:
   deploy_to_dev:
     needs: run_tests
     uses: ./.github/workflows/deploy.yml
+    permissions:
+      id-token: write
+      contents: read
     with:
       environment: dev
       aws_region: ap-southeast-2
@@ -22,6 +25,9 @@ jobs:
   deploy_to_prod:
     needs: deploy_to_dev
     uses: ./.github/workflows/deploy.yml
+    permissions:
+      id-token: write
+      contents: read
     with:
       environment: prod
       aws_region: ap-southeast-2
