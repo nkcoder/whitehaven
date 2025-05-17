@@ -1,8 +1,8 @@
 import { DynamoDBDocumentClient, GetCommand, QueryCommand } from "@aws-sdk/lib-dynamodb";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { getContracts, getMember } from "../src/database";
-import { getClient } from "../src/dynamodbClient";
-import { dbContractSchema, dbMemberSchema } from "../src/schema";
+import { getContracts, getMember } from "../src/database.js";
+import { getClient } from "../src/dynamodbClient.js";
+import { dbContractSchema, dbMemberSchema } from "../src/schema.js";
 
 vi.mock("../src/dynamodbClient");
 
@@ -109,6 +109,8 @@ describe("storage", () => {
     });
 
     it("should return empty if contracts are not found", async () => {
+      process.env.CONTRACT_TABLE = "contract";
+
       const mockQueryClient = {
         send: vi.fn().mockImplementation((_command: QueryCommand) => {
           return Promise.resolve({ Items: [] });
@@ -117,13 +119,15 @@ describe("storage", () => {
 
       vi.mocked(getClient).mockReturnValue(mockQueryClient);
 
-      const result = await getContracts("123");
+      const result = await getContracts("123").run();
 
       expect(result.isRight()).toBe(true);
       expect(result.extract()).toEqual([]);
     });
 
     it("should return an error if there is an error retrieving contracts", async () => {
+      process.env.CONTRACT_TABLE = "contract";
+
       const mockQueryClient = {
         send: vi.fn().mockImplementation((_command: QueryCommand) => {
           throw new Error("Error retrieving contracts");
@@ -132,11 +136,11 @@ describe("storage", () => {
 
       vi.mocked(getClient).mockReturnValue(mockQueryClient);
 
-      const result = await getContracts("123");
+      const result = await getContracts("123").run();
 
       expect(result.isLeft()).toBe(true);
       const errorMessage = result.leftOrDefault(new Error()).message;
-      expect(errorMessage).toEqual("Error retrieving contracts for memberId 123: Error: Error retrieving contracts");
+      expect(errorMessage).toEqual("Error retrieving contracts for memberId 123: Error retrieving contracts");
     });
   });
 });

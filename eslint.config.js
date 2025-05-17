@@ -1,8 +1,8 @@
-const tseslint = require("@typescript-eslint/eslint-plugin");
-const tsParser = require("@typescript-eslint/parser");
-const prettierConfig = require("eslint-config-prettier");
+import tseslint from "@typescript-eslint/eslint-plugin";
+import tsParser from "@typescript-eslint/parser";
+import prettier from "eslint-config-prettier";
 
-module.exports = [
+export default [
   {
     ignores: ["node_modules/**", ".serverless/**", "coverage/**", ".build/**", "dist/**", "**/*.d.ts"]
   },
@@ -45,5 +45,5 @@ module.exports = [
       "@typescript-eslint/no-explicit-any": "off"
     }
   },
-  prettierConfig
+  prettier
 ];

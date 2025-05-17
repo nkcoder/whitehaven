@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { convertKeysToSnakeCase, getQueueUrlByArn } from "../src/util";
+import { convertKeysToSnakeCase, getQueueUrlByArn } from "../src/util.js";
 
 describe("utils", () => {
   describe("convertKeysToSnakeCase", () => {

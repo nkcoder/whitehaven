@@ -1,8 +1,8 @@
 import ky from "ky";
 import { EitherAsync, Left, Maybe } from "purify-ts";
-import { eventTypes } from "./eventTypes";
-import { WebhookMemberData } from "./schema";
-import { convertKeysToSnakeCase, PlainObject } from "./util";
+import { eventTypes } from "./eventTypes.js";
+import { WebhookMemberData } from "./schema.js";
+import { convertKeysToSnakeCase, PlainObject } from "./util.js";
 
 const TYPE = Object.freeze({
   JOINER: "joiner",

@@ -1,7 +1,7 @@
 import { SQSEvent, SQSRecord } from "aws-lambda";
 import { EitherAsync } from "purify-ts";
-import { Message, sqsRecordBodySchema } from "./schema";
-import { processMessage } from "./service";
+import { Message, sqsRecordBodySchema } from "./schema.js";
+import { processMessage } from "./service.js";
 
 /**
  * Check `docs/sqs_event_sample.json` for the structure of the event
@@ -34,7 +34,7 @@ const handler = async (event: SQSEvent) => {
       };
     },
     // the message will retain in the queue and will be retried later
-    Left: error => {
+    Left: (error: Error) => {
       console.error(`Webhook error: ${error}, message: ${error.message}, env: ${process.env.ENV}`);
       if (error.message === "Webhook URL is not set" && process.env.ENV === "dev") {
         console.warn("Webhook URL is not set in dev environment, skipping the webhook call");

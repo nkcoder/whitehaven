@@ -1,8 +1,8 @@
 import { DeleteMessageCommand } from "@aws-sdk/client-sqs";
 import { EitherAsync, Left, Maybe } from "purify-ts";
-import { getContracts, getMember } from "./database";
-import { getEarlierDateTime, toDate, todayDate } from "./datetime";
-import { eventTypes } from "./eventTypes";
+import { getContracts, getMember } from "./database.js";
+import { getEarlierDateTime, toDate, todayDate } from "./datetime.js";
+import { eventTypes } from "./eventTypes.js";
 import {
   ApiContract,
   apiContractSchema,
@@ -15,10 +15,10 @@ import {
   Message,
   WebhookMemberData,
   webhookMemberDataSchema
-} from "./schema";
-import { getClient } from "./sqsClient";
-import { getQueueUrlByArn } from "./util";
-import { callMemberWebhook } from "./webhook";
+} from "./schema.js";
+import { getClient } from "./sqsClient.js";
+import { getQueueUrlByArn } from "./util.js";
+import { callMemberWebhook } from "./webhook.js";
 
 const getMemberDataForWebhook = (memberId: string): EitherAsync<Error, WebhookMemberData> => {
   return getMember(memberId).ap(
@@ -81,7 +81,7 @@ const processMessage = (
       return callMemberWebhook(data, eventType);
     });
 
-  const deleteMessage = async () => {
+  const deleteMessage = async (): Promise<string> => {
     const deleteResponse = await getClient().send(
       new DeleteMessageCommand({
         QueueUrl: getQueueUrlByArn(eventSourceARN),
@@ -97,7 +97,7 @@ const processMessage = (
     ? handleMember()
     : EitherAsync.liftEither(Left(new Error("Event type is not supported")));
 
-  return processResponse.map(async () => deleteMessage());
+  return processResponse.chain(() => EitherAsync(() => deleteMessage()));
 };
 
 export { processMessage };

@@ -1,9 +1,9 @@
 import ky from "ky";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { eventTypes } from "../src/eventTypes";
-import { ApiContract, ApiMember, WebhookMemberData } from "../src/schema";
-import { convertKeysToSnakeCase } from "../src/util";
-import { callMemberWebhook } from "../src/webhook";
+import { eventTypes } from "../src/eventTypes.js";
+import { ApiContract, ApiMember, WebhookMemberData } from "../src/schema.js";
+import { convertKeysToSnakeCase } from "../src/util.js";
+import { callMemberWebhook } from "../src/webhook.js";
 
 vi.mock("ky");
 

@@ -1,7 +1,7 @@
 import { GetCommand, QueryCommand } from "@aws-sdk/lib-dynamodb";
 import { EitherAsync, Maybe } from "purify-ts";
-import { getClient } from "./dynamodbClient";
-import { DbContract, DbMember, dbContractSchema, dbMemberSchema } from "./schema";
+import { getClient } from "./dynamodbClient.js";
+import { DbContract, DbMember, dbContractSchema, dbMemberSchema } from "./schema.js";
 
 const getMember = (memberId: string): EitherAsync<Error, DbMember> => {
   const memberTable = process.env.MEMBER_TABLE;
@@ -37,28 +37,29 @@ const getMember = (memberId: string): EitherAsync<Error, DbMember> => {
 };
 
 const getContracts = (memberId: string): EitherAsync<Error, DbContract[]> => {
-  const contractTable = process.env.CONTRACT_TABLE;
-  return EitherAsync(async ({ throwE }) => {
+  const tableName = process.env.CONTRACT_TABLE;
+  return EitherAsync<Error, DbContract[]>(async () => {
     try {
-      const queryCommand = new QueryCommand({
-        TableName: contractTable,
-        IndexName: "byMemberId",
-        KeyConditionExpression: "memberId = :memberId",
-        ExpressionAttributeValues: {
-          ":memberId": memberId
-        },
-        ProjectionExpression:
-          "id, memberId, membershipName, recurring, membershipId, costPrice, createdAt, startDateTime, endDateTime, expiryDateTime"
-      });
+      if (!tableName) {
+        throw new Error("CONTRACT_TABLE is not set");
+      }
 
-      const result = await getClient().send(queryCommand);
-      console.log(`Retrieved contracts result: ${JSON.stringify(result)}`);
-      return Maybe.fromNullable(result.Items)
-        .map(items => items.map(contract => dbContractSchema.parse(contract)))
-        .orDefaultLazy(() => []);
-    } catch (error) {
-      console.error(`Error retrieving contracts for memberId ${memberId}: ${error}`);
-      return throwE(new Error(`Error retrieving contracts for memberId ${memberId}: ${error}`));
+      const params = {
+        TableName: tableName,
+        KeyConditionExpression: "memberId = :mid",
+        ExpressionAttributeValues: {
+          ":mid": memberId
+        }
+      };
+
+      const command = new QueryCommand(params);
+      const response = await getClient().send(command);
+      const items = response.Items || [];
+
+      return items.length === 0 ? [] : items.map(contract => dbContractSchema.parse(contract));
+    } catch (err) {
+      const errMsg = err instanceof Error ? err.message : String(err);
+      throw new Error(`Error retrieving contracts for memberId ${memberId}: ${errMsg}`);
     }
   });
 };

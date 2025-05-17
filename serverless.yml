@@ -32,6 +32,8 @@ provider:
     CONTRACTS_TABLE: ${env:CONTRACTS_TABLE}
     WEBHOOK_MEMBER_URL: ${env:WEBHOOK_MEMBER_URL}
     ENV: ${self:provider.stage}
+    # Enable ESM for Lambda runtime
+    NODE_OPTIONS: --enable-source-maps --experimental-specifier-resolution=node
 
   deploymentBucket:
     name: whiteheaven-deployment-bucket-${self:provider.region}-${self:provider.stage}
