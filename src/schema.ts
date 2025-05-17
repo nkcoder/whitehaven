@@ -83,66 +83,27 @@ const webhookMemberDataSchema = z.object({
 });
 type WebhookMemberData = z.infer<typeof webhookMemberDataSchema>;
 
-const prospectSchema = z.object({
-  dob: z.string().date(),
-  country: z.string().nullish(),
-  email: z.string(),
-  gender: z.string(),
-  memberId: z.string(),
-  locationId: z.string().nullish(),
-  membershipId: z.string().nullish(),
-  membershipName: z.string().nullish(),
-  state: z.string().nullish(),
-  createdAt: z.string().datetime(),
-  suburb: z.string().nullish()
-});
-const dbProspectSchema = prospectSchema.extend({
-  id: z.string(),
-  address: z.string().nullish(),
-  givenName: z.string(),
-  surname: z.string(),
-  mobileNumber: z.string(),
-  postCode: z.string().or(z.number())
-});
-type DbProspect = z.infer<typeof dbProspectSchema>;
-
-const webhookProspectDataSchema = prospectSchema.extend({
-  venueName: z.string(),
-  sourceGroup: z.string(),
-  sourceName: z.string(),
-  firstName: z.string(),
-  lastName: z.string(),
-  phone: z.string(),
-  prospectId: z.string(),
-  zip: z.string().nullish()
-});
-type WebhookProspectData = z.infer<typeof webhookProspectDataSchema>;
-
 export {
-  messageSchema,
-  Message,
-  memberSchema,
-  Member,
-  apiMemberSchema,
-  ApiMember,
-  dbMemberSchema,
-  DbMember,
-  MemberStatus,
-  dbContractSchema,
-  DbContract,
-  apiContractSchema,
   ApiContract,
-  contractSchema,
+  apiContractSchema,
+  ApiMember,
+  apiMemberSchema,
   Contract,
+  contractSchema,
   ContractStatus,
-  webhookMemberDataSchema,
-  WebhookMemberData,
   contractStatusSchema,
+  DbContract,
+  dbContractSchema,
+  DbMember,
+  dbMemberSchema,
+  Member,
+  memberSchema,
+  MemberStatus,
   memberStatusSchema,
-  dbProspectSchema,
-  DbProspect,
-  webhookProspectDataSchema,
-  WebhookProspectData,
+  Message,
+  messageSchema,
   SqsRecordBody,
-  sqsRecordBodySchema
+  sqsRecordBodySchema,
+  WebhookMemberData,
+  webhookMemberDataSchema
 };

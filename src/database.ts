@@ -1,7 +1,7 @@
-import { dbMemberSchema, DbMember, dbContractSchema, DbContract, DbProspect, dbProspectSchema } from "./schema";
+import { GetCommand, QueryCommand } from "@aws-sdk/lib-dynamodb";
 import { EitherAsync, Maybe } from "purify-ts";
 import { getClient } from "./dynamodbClient";
-import { GetCommand, QueryCommand } from "@aws-sdk/lib-dynamodb";
+import { DbContract, DbMember, dbContractSchema, dbMemberSchema } from "./schema";
 
 const getMember = (memberId: string): EitherAsync<Error, DbMember> => {
   const memberTable = process.env.MEMBER_TABLE;
@@ -63,37 +63,4 @@ const getContracts = (memberId: string): EitherAsync<Error, DbContract[]> => {
   });
 };
 
-const getProspect = (prospectId: string): EitherAsync<Error, DbProspect> => {
-  const prospectTable = process.env.PROSPECT_TABLE;
-
-  return EitherAsync(async ({ throwE }) => {
-    try {
-      const getCommand = new GetCommand({
-        TableName: prospectTable,
-        Key: {
-          id: prospectId
-        },
-        ProjectionExpression:
-          "id, address, givenName, surname, mobileNumber, postCode, dob, country, email, gender, memberId, locationId, membershipId, membershipName, #s, suburb, createdAt",
-        ExpressionAttributeNames: {
-          "#s": "state"
-        }
-      });
-      const result = await getClient().send(getCommand);
-      const maybeProspect = Maybe.fromNullable(result.Item);
-
-      return maybeProspect.caseOf({
-        Just: prospect => {
-          console.log(`Retrieved prospect: ${JSON.stringify(prospect)}`);
-          return dbProspectSchema.parse(prospect);
-        },
-        Nothing: () => throwE(new Error(`Prospect with id ${prospectId} not found`))
-      });
-    } catch (error) {
-      console.error(`Error retrieving prospect with prospectId ${prospectId}: ${error}`);
-      return throwE(new Error(`Error retrieving prospect with prospectId ${prospectId}: ${error}`));
-    }
-  });
-};
-
-export { getMember, getContracts, getProspect };
+export { getContracts, getMember };

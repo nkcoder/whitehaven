@@ -1,0 +1,9 @@
+#!/usr/bin/env sh
+
+export AWS_REGION=ap-southeast-2
+export SQS_ARN=arn:aws:sqs:ap-southeast-2:123456789012:test-queue
+export MEMBERS_TABLE=members
+export CONTRACTS_TABLE=contracts
+export WEBHOOK_MEMBER_URL=http://localhost:3000/webhook/member
+
+npm start

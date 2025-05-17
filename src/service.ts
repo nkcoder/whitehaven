@@ -1,7 +1,8 @@
+import { DeleteMessageCommand } from "@aws-sdk/client-sqs";
 import { EitherAsync, Left, Maybe } from "purify-ts";
+import { getContracts, getMember } from "./database";
 import { getEarlierDateTime, toDate, todayDate } from "./datetime";
 import { eventTypes } from "./eventTypes";
-import { DeleteMessageCommand } from "@aws-sdk/client-sqs";
 import {
   ApiContract,
   apiContractSchema,
@@ -10,17 +11,14 @@ import {
   contractStatusSchema,
   DbContract,
   DbMember,
-  WebhookMemberData,
-  webhookMemberDataSchema,
-  webhookProspectDataSchema,
-  WebhookProspectData,
   memberStatusSchema,
-  Message
+  Message,
+  WebhookMemberData,
+  webhookMemberDataSchema
 } from "./schema";
-import { getContracts, getMember, getProspect } from "./database";
-import { callMemberWebhook, callProspectWebhook } from "./webhook";
 import { getClient } from "./sqsClient";
 import { getQueueUrlByArn } from "./util";
+import { callMemberWebhook } from "./webhook";
 
 const getMemberDataForWebhook = (memberId: string): EitherAsync<Error, WebhookMemberData> => {
   return getMember(memberId).ap(
@@ -72,47 +70,15 @@ const isContractExpired = (expiryDateTime: string | null, endDateTime: string | 
   return expiryDate.map(expiry => expiry <= todayDate).orDefault(false);
 };
 
-const getProspectDataForWebhook = (prospectId: string): EitherAsync<Error, WebhookProspectData> => {
-  return getProspect(prospectId).map(prospect => {
-    const prospectForWebhook = {
-      venueName: prospect.locationId,
-      sourceGroup: "web",
-      sourceName: "Abandoned Cart",
-      firstName: prospect.givenName,
-      lastName: prospect.surname,
-      phone: prospect.mobileNumber,
-      prospectId: prospect.id,
-      zip: prospect.postCode + "",
-      state: prospect.state,
-      dob: prospect.dob,
-      country: prospect.country,
-      email: prospect.email,
-      gender: prospect.gender,
-      memberId: prospect.memberId,
-      membershipId: prospect.membershipId,
-      membershipName: prospect.membershipName,
-      suburb: prospect.suburb,
-      createdAt: prospect.createdAt
-    };
-    return webhookProspectDataSchema.parse(prospectForWebhook);
-  });
-};
-
 const processMessage = (
   message: Message,
   eventSourceARN: string,
   receiptHandle: string
 ): EitherAsync<Error, string> => {
-  const handleProspect = (id: string) =>
-    getProspectDataForWebhook(id).chain(data => {
-      console.log(`Prospect data before calling webhook: ${JSON.stringify(data)}`);
-      return callProspectWebhook(data);
-    });
-
   const handleMember = () =>
     getMemberDataForWebhook(message.memberId).chain(data => {
       console.log(`Member data before calling webhook: ${JSON.stringify(data)}`);
-      return callMemberWebhook(data, message.eventType);
+      return callMemberWebhook(data, eventType);
     });
 
   const deleteMessage = async () => {
@@ -126,12 +92,10 @@ const processMessage = (
     return "Messaged is deleted successfully";
   };
 
-  const processResponse =
-    message.eventType === eventTypes.MEMBER_PROSPECT
-      ? Maybe.fromNullable(message.prospectId)
-          .map(handleProspect)
-          .orDefault(EitherAsync.liftEither(Left(new Error("ProspectId is missing in the message"))))
-      : handleMember();
+  const eventType = message.eventType as keyof typeof eventTypes;
+  const processResponse = Object.values(eventTypes).includes(eventType)
+    ? handleMember()
+    : EitherAsync.liftEither(Left(new Error("Event type is not supported")));
 
   return processResponse.map(async () => deleteMessage());
 };

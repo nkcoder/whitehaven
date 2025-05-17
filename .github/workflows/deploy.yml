@@ -51,7 +51,7 @@ jobs:
           role-to-assume: ${{ secrets.AWS_STS_ROLE }}
 
       - name: Deploy Lambda
-        run: serverless deploy --stage ${{ inputs.environment }} --wait
+        run: serverless deploy --stage ${{ inputs.environment }}
         env:
           MEMBERS_TABLE: ${{ vars.MEMBERS_TABLE }}
           CONTRACTS_TABLE: ${{ vars.CONTRACTS_TABLE }}
