@@ -7,7 +7,7 @@ service: whitehaven
 
 provider:
   name: aws
-  runtime: nodejs20.x
+  runtime: nodejs22.x
   stage: ${opt:stage}
   region: ${env:AWS_REGION}
   stackName: whiteheaven-stack-${self:provider.stage}
