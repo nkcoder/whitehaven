@@ -9,14 +9,12 @@ const convertKeysToSnakeCase = (obj: PlainObject): PlainObject => {
 
   if (Array.isArray(obj)) {
     return obj.map(convertKeysToSnakeCase);
-  } else if (typeof obj === "object" && obj !== null) {
-    return Object.entries(obj).reduce((acc, [key, value]) => {
-      const newKey = changeCase.snakeCase(key);
-      return { ...acc, [newKey]: convertKeysToSnakeCase(value) };
-    }, {});
   }
 
-  return obj;
+  return Object.entries(obj).reduce((acc, [key, value]) => {
+    const newKey = changeCase.snakeCase(key);
+    return { ...acc, [newKey]: convertKeysToSnakeCase(value) };
+  }, {});
 };
 
 const getQueueUrlByArn = (queueArn: string): string => {
@@ -24,4 +22,4 @@ const getQueueUrlByArn = (queueArn: string): string => {
   return `https://sqs.${region}.amazonaws.com/${accountId}/${queueName}`;
 };
 
-export { convertKeysToSnakeCase, PlainObject, getQueueUrlByArn };
+export { convertKeysToSnakeCase, getQueueUrlByArn, PlainObject };

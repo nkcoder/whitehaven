@@ -1,8 +1,8 @@
 import { SQSEvent } from "aws-lambda";
 import { EitherAsync } from "purify-ts";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { handler } from "../src/index";
 import { eventTypes } from "../src/eventTypes";
+import { handler } from "../src/index";
 import { Message } from "../src/schema";
 import { processMessage } from "../src/service";
 
@@ -36,35 +36,6 @@ describe("handler", () => {
     const result = await handler(mockEvent);
 
     const message: Message = { memberId: "123", eventType: eventTypes.MEMBER_JOINED };
-    expect(processMessage).toHaveBeenCalledWith(message, "test-event-source-arn", "test-receipt-handle");
-    expect(result).toEqual({
-      statusCode: 200,
-      body: JSON.stringify("All webhook responses successful")
-    });
-  });
-
-  it("should process the prospect event", async () => {
-    const mockEvent = {
-      Records: [
-        {
-          body: JSON.stringify({
-            Message: JSON.stringify({
-              prospectId: "456",
-              memberId: "123",
-              eventType: eventTypes.MEMBER_PROSPECT
-            })
-          }),
-          eventSourceARN: "test-event-source-arn",
-          receiptHandle: "test-receipt-handle"
-        }
-      ]
-    } as unknown as SQSEvent;
-
-    vi.mocked(processMessage).mockReturnValue(EitherAsync(() => Promise.resolve("Prospect message processed")));
-
-    const result = await handler(mockEvent);
-
-    const message: Message = { prospectId: "456", memberId: "123", eventType: eventTypes.MEMBER_PROSPECT };
     expect(processMessage).toHaveBeenCalledWith(message, "test-event-source-arn", "test-receipt-handle");
     expect(result).toEqual({
       statusCode: 200,

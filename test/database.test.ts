@@ -1,8 +1,8 @@
 import { DynamoDBDocumentClient, GetCommand, QueryCommand } from "@aws-sdk/lib-dynamodb";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { getContracts, getMember, getProspect } from "../src/database";
+import { getContracts, getMember } from "../src/database";
 import { getClient } from "../src/dynamodbClient";
-import { dbContractSchema, dbMemberSchema, dbProspectSchema } from "../src/schema";
+import { dbContractSchema, dbMemberSchema } from "../src/schema";
 
 vi.mock("../src/dynamodbClient");
 
@@ -138,59 +138,5 @@ describe("storage", () => {
       const errorMessage = result.leftOrDefault(new Error()).message;
       expect(errorMessage).toEqual("Error retrieving contracts for memberId 123: Error: Error retrieving contracts");
     });
-  });
-
-  describe("getProspect", () => {
-    const mockProspect = {
-      id: "p111",
-      givenName: "John",
-      surname: "Doe",
-      mobileNumber: "+61456789876",
-      postCode: "2900",
-      dob: "1990-09-09",
-      email: "test_123@test.com",
-      gender: "private",
-      memberId: "m123",
-      locationId: "loc_456",
-      membershipId: "ms_789",
-      membershipName: "Membership 1",
-      state: "ACT",
-      createdAt: "2021-01-01T00:00:00Z"
-    };
-
-    it("should retrieve prospect", async () => {
-      process.env.PROSPECT_TABLE = "prospect";
-
-      const mockGetClient = {
-        send: vi.fn().mockImplementation((command: GetCommand) => Promise.resolve({ Item: mockProspect }))
-      } as unknown as DynamoDBDocumentClient;
-
-      vi.mocked(getClient).mockReturnValue(mockGetClient);
-
-      const result = await getProspect("p111").run();
-
-      expect(result.isRight()).toBe(true);
-      expect(result.extract()).toEqual(dbProspectSchema.parse(mockProspect));
-    });
-  });
-
-  it("should return an error if prospect is not found", async () => {
-    const mockGetClient = {
-      send: vi.fn().mockImplementation((command: GetCommand) => {
-        if (command instanceof GetCommand) {
-          return Promise.resolve({ Item: null });
-        }
-      })
-    } as unknown as DynamoDBDocumentClient;
-
-    vi.mocked(getClient).mockReturnValue(mockGetClient);
-
-    const result = await getProspect("p111");
-
-    expect(result.isLeft()).toBe(true);
-    const errorMessage = result.leftOrDefault(new Error()).message;
-    expect(errorMessage).toEqual(
-      "Error retrieving prospect with prospectId p111: Error: Prospect with id p111 not found"
-    );
   });
 });

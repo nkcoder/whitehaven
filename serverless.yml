@@ -28,9 +28,7 @@ provider:
   environment:
     MEMBERS_TABLE: ${env:MEMBERS_TABLE}
     CONTRACTS_TABLE: ${env:CONTRACTS_TABLE}
-    PROSPECTS_TABLE: ${env:PROSPECTS_TABLE}
     WEBHOOK_MEMBER_URL: ${env:WEBHOOK_MEMBER_URL}
-    WEBHOOK_PROSPECT_URL: ${env:WEBHOOK_PROSPECT_URL}
     ENV: ${self:provider.stage}
 
   deploymentBucket:
@@ -57,3 +55,4 @@ custom:
 
 plugins:
   - serverless-prune-plugin
+  - serverless-offline
