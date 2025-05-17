@@ -1,6 +1,6 @@
 import { DynamoDBDocumentClient } from "@aws-sdk/lib-dynamodb";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
-import { getClient } from "../src/dynamodbClient";
+import { getClient } from "../src/dynamodbClient.js";
 
 describe("getClient", () => {
   let originalRegion: string | undefined;

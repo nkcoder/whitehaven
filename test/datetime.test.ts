@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { toDate, getEarlierDateTime } from "../src/datetime";
+import { toDate, getEarlierDateTime } from "../src/datetime.js";
 
 describe("Datetime Functions", () => {
   describe("toDate", () => {

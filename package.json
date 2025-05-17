@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "This project includes a AWS Lambda function, which consumes messages from AWS SQS, get data from AWS DynamoDB, then notify remote systems by calling a webhook API.",
   "main": "index.js",
+  "type": "module",
   "scripts": {
     "start": "sls offline --stage local",
     "build": "tsc",

@@ -2,12 +2,12 @@ import { SQSClient } from "@aws-sdk/client-sqs";
 import { beforeEach } from "node:test";
 import { EitherAsync, Left } from "purify-ts";
 import { describe, expect, it, vi } from "vitest";
-import { getContracts, getMember } from "../src/database";
-import { eventTypes } from "../src/eventTypes";
-import { DbContract, DbMember, memberStatusSchema, Message } from "../src/schema";
-import { processMessage } from "../src/service";
-import { getClient } from "../src/sqsClient";
-import { callMemberWebhook } from "../src/webhook";
+import { getContracts, getMember } from "../src/database.js";
+import { eventTypes } from "../src/eventTypes.js";
+import { DbContract, DbMember, memberStatusSchema, Message, WebhookMemberData } from "../src/schema.js";
+import { processMessage } from "../src/service.js";
+import { getClient } from "../src/sqsClient.js";
+import { callMemberWebhook } from "../src/webhook.js";
 
 describe("processMessage", () => {
   vi.mock("../src/database.ts");
@@ -209,7 +209,7 @@ describe("processMessage", () => {
     vi.mocked(getContracts).mockReturnValue(EitherAsync<Error, DbContract[]>(() => Promise.resolve(mockContracts)));
 
     const mockWebhookResponse = "Webhook called successfully for overdue member";
-    vi.mocked(callMemberWebhook).mockImplementation((data, _eventType) => {
+    vi.mocked(callMemberWebhook).mockImplementation((data: WebhookMemberData, _eventType: string) => {
       expect(data.member.status).toBe(memberStatusSchema.Enum.frozen);
       return EitherAsync<Error, string>(() => Promise.resolve(mockWebhookResponse));
     });
@@ -263,7 +263,7 @@ describe("processMessage", () => {
     vi.mocked(getContracts).mockReturnValue(EitherAsync<Error, DbContract[]>(() => Promise.resolve(mockContracts)));
 
     const mockWebhookResponse = "Webhook called successfully for no-balance member";
-    vi.mocked(callMemberWebhook).mockImplementation((data, _eventType) => {
+    vi.mocked(callMemberWebhook).mockImplementation((data: WebhookMemberData, _eventType: string) => {
       expect(data.member.status).toBe(memberStatusSchema.Enum.active);
       return EitherAsync<Error, string>(() => Promise.resolve(mockWebhookResponse));
     });
