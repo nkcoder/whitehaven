@@ -15,7 +15,7 @@ The project is deployed to AWS using the [Serverless Framework](https://www.serv
   - AWS Lambda function
   - AWS SQS
   - AWS DynamoDB
-- Serverless Framework: for IaC and deployment
+- [Serverless Framework](https://www.serverless.com/): for IaC and deployment
 - Github Actions: for CI/CD
 - [purify-ts](https://gigobyte.github.io/purify/): a small functional programming library for TypeScript
 - [vitest](https://vitest.dev/): unit testing with test coverage
