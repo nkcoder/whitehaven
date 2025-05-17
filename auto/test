@@ -1,4 +1,3 @@
 #!/usr/bin/env sh
 
-npm run lint
 npm run test_coverage

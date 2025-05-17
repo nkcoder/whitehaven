@@ -38,14 +38,13 @@ npm install
 Run the linter:
 
 ```sh
-npm run lint       # Check for linting issues
-npm run lint:fix   # Fix linting issues automatically
+auto/lint
 ```
 
 Run the formatter:
 
 ```sh
-npm run format
+auto/format
 ```
 
 Run the tests:
@@ -54,10 +53,10 @@ Run the tests:
 auto/test
 ```
 
-Run locally:
+Run locally/offline:
 
 ```sh
-nvm install --lts
+auto/run_local
 ```
 
 ## 1Pager
