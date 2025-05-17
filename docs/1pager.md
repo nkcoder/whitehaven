@@ -4,7 +4,7 @@
 
 ## Github Actions Configuration
 
-### Create an STS role for Github Actions
+### Create an STS role for each environment
 
 Permissions example:
 
@@ -65,11 +65,25 @@ Trust relationships example:
 
 - The format of `token.actions.githubusercontent.com:sub`: "repo:<owner>/<repo>:environment:<environment>"
 
-### Add a Identity Provider
+Add a Identity Provider
 
 - Provider type: OpenID Connect
 - Provider URL: https://token.actions.githubusercontent.com
 - Audience: sts.amazonaws.com
+
+### Create `dev` and `prod` env
+
+For each env, configure the following environment variables
+
+- CONTRACTS_TABLE
+- MEMBERS_TABLE
+- SQS_ARN
+- WEBHOOK_MEMBER_URL
+
+And, configure the following environment secrets:
+
+- AWS_STS_ROLE (the role that we configured in the above step)
+- SERVERLESS_ACCESS_KEY
 
 ## Trouble shooting
 
