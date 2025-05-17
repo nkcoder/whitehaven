@@ -43,7 +43,7 @@ describe("storage", () => {
       process.env.MEMBER_TABLE = "member";
 
       const mockGetClient = {
-        send: vi.fn().mockImplementation((command: GetCommand) => Promise.resolve({ Item: mockMember }))
+        send: vi.fn().mockImplementation((_command: GetCommand) => Promise.resolve({ Item: mockMember }))
       } as unknown as DynamoDBDocumentClient;
 
       vi.mocked(getClient).mockReturnValue(mockGetClient);
@@ -56,8 +56,8 @@ describe("storage", () => {
 
     it("should return an error if member is not found", async () => {
       const mockGetClient = {
-        send: vi.fn().mockImplementation((command: GetCommand) => {
-          if (command instanceof GetCommand) {
+        send: vi.fn().mockImplementation((_command: GetCommand) => {
+          if (_command instanceof GetCommand) {
             return Promise.resolve({ Item: null });
           }
         })
@@ -97,7 +97,7 @@ describe("storage", () => {
       process.env.CONTRACT_TABLE = "contract";
 
       const mockQueryClient = {
-        send: vi.fn().mockImplementation((command: QueryCommand) => Promise.resolve({ Items: mockContracts }))
+        send: vi.fn().mockImplementation((_command: QueryCommand) => Promise.resolve({ Items: mockContracts }))
       } as unknown as DynamoDBDocumentClient;
 
       vi.mocked(getClient).mockReturnValue(mockQueryClient);
@@ -110,7 +110,7 @@ describe("storage", () => {
 
     it("should return empty if contracts are not found", async () => {
       const mockQueryClient = {
-        send: vi.fn().mockImplementation((command: QueryCommand) => {
+        send: vi.fn().mockImplementation((_command: QueryCommand) => {
           return Promise.resolve({ Items: [] });
         })
       } as unknown as DynamoDBDocumentClient;
@@ -125,7 +125,7 @@ describe("storage", () => {
 
     it("should return an error if there is an error retrieving contracts", async () => {
       const mockQueryClient = {
-        send: vi.fn().mockImplementation((command: QueryCommand) => {
+        send: vi.fn().mockImplementation((_command: QueryCommand) => {
           throw new Error("Error retrieving contracts");
         })
       } as unknown as DynamoDBDocumentClient;

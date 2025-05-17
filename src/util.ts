@@ -1,6 +1,9 @@
 import * as changeCase from "change-case";
 
-type PlainObject = { [key: string]: any } | null | undefined | number | string | boolean;
+type JsonValue = string | number | boolean | null | undefined | JsonObject | JsonArray;
+type JsonObject = { [key: string]: JsonValue };
+type JsonArray = JsonValue[];
+type PlainObject = JsonValue;
 
 const convertKeysToSnakeCase = (obj: PlainObject): PlainObject => {
   if (typeof obj !== "object" || obj === null) {

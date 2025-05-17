@@ -1,6 +1,6 @@
 import { SQSEvent, SQSRecord } from "aws-lambda";
 import { EitherAsync } from "purify-ts";
-import { Message, messageSchema, sqsRecordBodySchema } from "./schema";
+import { Message, sqsRecordBodySchema } from "./schema";
 import { processMessage } from "./service";
 
 /**

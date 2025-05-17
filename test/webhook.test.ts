@@ -1,9 +1,9 @@
-import { describe, it, expect, beforeEach, vi } from "vitest";
-import { callMemberWebhook, callProspectWebhook } from "../src/webhook";
-import { ApiContract, ApiMember, WebhookMemberData, WebhookProspectData } from "../src/schema";
-import { eventTypes } from "../src/eventTypes";
 import ky from "ky";
+import { beforeEach, describe, expect, it, vi } from "vitest";
+import { eventTypes } from "../src/eventTypes";
+import { ApiContract, ApiMember, WebhookMemberData } from "../src/schema";
 import { convertKeysToSnakeCase } from "../src/util";
+import { callMemberWebhook } from "../src/webhook";
 
 vi.mock("ky");
 
@@ -46,8 +46,14 @@ describe("webhook", () => {
     };
 
     it("should successfully call webhook for MEMBER_JOINED event", async () => {
-      const mockResponse = { ok: true, json: vi.fn().mockResolvedValue({ success: true }) };
-      vi.mocked(ky.post).mockResolvedValue(mockResponse as any);
+      // We need to create a response that matches what ky expects
+      const mockResponse = {
+        ok: true,
+        json: () => Promise.resolve({ success: true })
+      };
+
+      // @ts-expect-error - Mock response doesn't need to implement the full Response interface
+      vi.mocked(ky.post).mockResolvedValue(mockResponse);
 
       const result = await callMemberWebhook(mockMemberData, eventTypes.MEMBER_JOINED).run();
 
@@ -62,8 +68,13 @@ describe("webhook", () => {
     });
 
     it("should successfully call webhook for STATUS_UPDATE event", async () => {
-      const mockResponse = { ok: true, json: vi.fn().mockResolvedValue({ success: true }) };
-      vi.mocked(ky.post).mockResolvedValue(mockResponse as any);
+      const mockResponse = {
+        ok: true,
+        json: () => Promise.resolve({ success: true })
+      };
+
+      // @ts-expect-error - Mock response doesn't need to implement the full Response interface
+      vi.mocked(ky.post).mockResolvedValue(mockResponse);
 
       const result = await callMemberWebhook(mockMemberData, eventTypes.CANCELLATION_CREATED).run();
 
@@ -78,8 +89,14 @@ describe("webhook", () => {
     });
 
     it("should return an error when webhook call fails", async () => {
-      const mockResponse = { ok: false, statusText: "Internal Server Error" };
-      vi.mocked(ky.post).mockResolvedValue(mockResponse as any);
+      const mockResponse = {
+        ok: false,
+        statusText: "Internal Server Error",
+        json: () => Promise.resolve({})
+      };
+
+      // @ts-expect-error - Mock response doesn't need to implement the full Response interface
+      vi.mocked(ky.post).mockResolvedValue(mockResponse);
 
       const result = await callMemberWebhook(mockMemberData, eventTypes.MEMBER_JOINED).run();
 
@@ -91,67 +108,6 @@ describe("webhook", () => {
       process.env.WEBHOOK_MEMBER_URL = "";
 
       const result = await callMemberWebhook(mockMemberData, eventTypes.MEMBER_JOINED).run();
-
-      expect(result.isLeft()).toBe(true);
-      expect(result.extract().toString()).toBe("Error: Webhook URL is not set");
-      expect(ky.post).not.toHaveBeenCalled();
-    });
-  });
-
-  describe("callProspectWebhook", () => {
-    const mockProspectData = {
-      venueName: "Venue",
-      sourceGroup: "Group",
-      sourceName: "Name",
-      firstName: "John",
-      lastName: "Doe",
-      phone: "+61456789876",
-      prospectId: "123",
-      dob: "1990-09-09",
-      country: "AU",
-      email: "test@x.com",
-      gender: "Male",
-      memberId: "234"
-    } as WebhookProspectData;
-
-    it("should successfully call webhook for MEMBER_JOINED event", async () => {
-      const mockResponse = { ok: true, json: vi.fn().mockResolvedValue({ success: true }) };
-      vi.mocked(ky.post).mockResolvedValue(mockResponse as any);
-
-      const result = await callProspectWebhook(mockProspectData).run();
-
-      expect(result.isRight()).toBe(true);
-      expect(ky.post).toHaveBeenCalledWith(mockProspectWebhookUrl, {
-        json: convertKeysToSnakeCase(mockProspectData)
-      });
-    });
-
-    it("should successfully call webhook for STATUS_UPDATE event", async () => {
-      const mockResponse = { ok: true, json: vi.fn().mockResolvedValue({ success: true }) };
-      vi.mocked(ky.post).mockResolvedValue(mockResponse as any);
-
-      const result = await callProspectWebhook(mockProspectData).run();
-
-      expect(result.isRight()).toBe(true);
-      expect(ky.post).toHaveBeenCalledWith(mockProspectWebhookUrl, {
-        json: convertKeysToSnakeCase(mockProspectData)
-      });
-    });
-
-    it("should return an error when webhook call fails", async () => {
-      const mockResponse = { ok: false, statusText: "Internal Server Error" };
-      vi.mocked(ky.post).mockResolvedValue(mockResponse as any);
-
-      const result = await callProspectWebhook(mockProspectData).run();
-
-      expect(result.isLeft()).toBe(true);
-      expect(result.leftOrDefault(new Error()).message).toBe("Failed to send webhook: Internal Server Error");
-    });
-
-    it("should return an error when WEBHOOK_URL is not set", async () => {
-      process.env.WEBHOOK_PROSPECT_URL = "";
-
-      const result = await callProspectWebhook(mockProspectData).run();
 
       expect(result.isLeft()).toBe(true);
       expect(result.extract().toString()).toBe("Error: Webhook URL is not set");

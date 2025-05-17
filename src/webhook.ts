@@ -1,7 +1,7 @@
 import ky from "ky";
 import { EitherAsync, Left, Maybe } from "purify-ts";
 import { eventTypes } from "./eventTypes";
-import { WebhookMemberData, WebhookProspectData } from "./schema";
+import { WebhookMemberData } from "./schema";
 import { convertKeysToSnakeCase, PlainObject } from "./util";
 
 const TYPE = Object.freeze({
@@ -44,11 +44,4 @@ const callMemberWebhook = (data: WebhookMemberData, eventType: string): EitherAs
   return sendWebhook(maybeUrl, payload);
 };
 
-const callProspectWebhook = (data: WebhookProspectData): EitherAsync<Error, string> => {
-  const maybeUrl = Maybe.fromNullable(process.env.WEBHOOK_PROSPECT_URL);
-  const payload = data;
-
-  return sendWebhook(maybeUrl, payload);
-};
-
-export { callMemberWebhook, callProspectWebhook };
+export { callMemberWebhook };

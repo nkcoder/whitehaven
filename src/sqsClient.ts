@@ -1,6 +1,6 @@
 import { SQSClient } from "@aws-sdk/client-sqs";
 
-let sqsClient: SQSClient | null = null;
+const sqsClient: SQSClient | null = null;
 
 const getClient = () => {
   if (!sqsClient) {

@@ -20,7 +20,7 @@
       "messageAttributes": {},
       "md5OfBody": "8a444cecab3936300e1010389b3b6f3c",
       "eventSource": "aws:sqs",
-      "eventSourceARN": "arn:aws:sqs:ap-southeast-2:123456789000:member_update_for_keepme_queue.fifo",
+      "eventSourceARN": "arn:aws:sqs:ap-southeast-2:123456789000:member_update_queue.fifo",
       "awsRegion": "ap-southeast-2"
     }
   ]

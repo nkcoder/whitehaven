@@ -209,7 +209,7 @@ describe("processMessage", () => {
     vi.mocked(getContracts).mockReturnValue(EitherAsync<Error, DbContract[]>(() => Promise.resolve(mockContracts)));
 
     const mockWebhookResponse = "Webhook called successfully for overdue member";
-    vi.mocked(callMemberWebhook).mockImplementation((data, eventType) => {
+    vi.mocked(callMemberWebhook).mockImplementation((data, _eventType) => {
       expect(data.member.status).toBe(memberStatusSchema.Enum.frozen);
       return EitherAsync<Error, string>(() => Promise.resolve(mockWebhookResponse));
     });
@@ -263,7 +263,7 @@ describe("processMessage", () => {
     vi.mocked(getContracts).mockReturnValue(EitherAsync<Error, DbContract[]>(() => Promise.resolve(mockContracts)));
 
     const mockWebhookResponse = "Webhook called successfully for no-balance member";
-    vi.mocked(callMemberWebhook).mockImplementation((data, eventType) => {
+    vi.mocked(callMemberWebhook).mockImplementation((data, _eventType) => {
       expect(data.member.status).toBe(memberStatusSchema.Enum.active);
       return EitherAsync<Error, string>(() => Promise.resolve(mockWebhookResponse));
     });
