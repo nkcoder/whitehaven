@@ -1,4 +1,4 @@
-![CI - dev](https://github.com/nkcoder/whitehaven/actions/workflows/deploy_dev.yml/badge.svg?branch=main) ![CI - prod](https://github.com/nkcoder/whitehaven/actions/workflows/deploy_prod.yml/badge.svg?branch=main)
+[![Lint & Test](https://github.com/nkcoder/whitehaven/actions/workflows/lint_test.yml/badge.svg)](https://github.com/nkcoder/whitehaven/actions/workflows/validate_pr.yml) [![PR Validation](https://github.com/nkcoder/whitehaven/actions/workflows/validate_pr.yml/badge.svg)](https://github.com/nkcoder/whitehaven/actions/workflows/validate_pr.yml) [![CI Pipeline](https://github.com/nkcoder/whitehaven/actions/workflows/deploy_pipeline.yml/badge.svg?branch=main)](https://github.com/nkcoder/whitehaven/actions/workflows/deploy_pipeline.yml)
 
 This project includes a AWS Lambda function, which consumes messages from AWS SQS, gets data from AWS DynamoDB, then notifies remote systems by calling webhook APIs.
 
