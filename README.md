@@ -23,6 +23,7 @@ The project is deployed to AWS using the [Serverless Framework](https://www.serv
 - [ky](https://github.com/sindresorhus/ky): delightful HTTP requests
 - [ESLint](https://eslint.org/): code linting with TypeScript support
 - [Prettier](https://prettier.io/): code formatting
+- [husky](https://github.com/typicode/husky): git hooks
 
 ## Development
 
