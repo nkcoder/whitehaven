@@ -21,6 +21,8 @@ The project is deployed to AWS using the [Serverless Framework](https://www.serv
 - [vitest](https://vitest.dev/): unit testing with test coverage
 - [zod](https://zod.dev/): schema validation
 - [ky](https://github.com/sindresorhus/ky): delightful HTTP requests
+- [ESLint](https://eslint.org/): code linting with TypeScript support
+- [Prettier](https://prettier.io/): code formatting
 
 ## Development
 
@@ -31,6 +33,19 @@ nvm install --lts
 nvm use .
 
 npm install
+```
+
+Run the linter:
+
+```sh
+npm run lint       # Check for linting issues
+npm run lint:fix   # Fix linting issues automatically
+```
+
+Run the formatter:
+
+```sh
+npm run format
 ```
 
 Run the tests:
