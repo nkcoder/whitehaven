@@ -61,13 +61,13 @@ const contractSchema = z.object({
   membershipId: z.string(),
   description: z.string().optional(),
   costPrice: z.number(),
-  createdAt: z.string().datetime(),
-  startDateTime: z.string().datetime(),
-  expiryDateTime: z.string().datetime().nullish().default(null)
+  createdAt: z.iso.datetime(),
+  startDateTime: z.iso.datetime(),
+  expiryDateTime: z.iso.datetime().nullish().default(null)
 });
 const contractStatusSchema = z.enum(["active", "suspended", "cancelled"]);
 const dbContractSchema = contractSchema.extend({
-  endDateTime: z.string().datetime().nullish().default(null)
+  endDateTime: z.iso.datetime().nullish().default(null)
 });
 const apiContractSchema = contractSchema.extend({
   status: contractStatusSchema.default("active")

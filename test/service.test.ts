@@ -210,7 +210,7 @@ describe("processMessage", () => {
 
     const mockWebhookResponse = "Webhook called successfully for overdue member";
     vi.mocked(callMemberWebhook).mockImplementation((data: WebhookMemberData, _eventType: string) => {
-      expect(data.member.status).toBe(memberStatusSchema.Enum.frozen);
+      expect(data.member.status).toBe(memberStatusSchema.enum.frozen);
       return EitherAsync<Error, string>(() => Promise.resolve(mockWebhookResponse));
     });
 
@@ -264,7 +264,7 @@ describe("processMessage", () => {
 
     const mockWebhookResponse = "Webhook called successfully for no-balance member";
     vi.mocked(callMemberWebhook).mockImplementation((data: WebhookMemberData, _eventType: string) => {
-      expect(data.member.status).toBe(memberStatusSchema.Enum.active);
+      expect(data.member.status).toBe(memberStatusSchema.enum.active);
       return EitherAsync<Error, string>(() => Promise.resolve(mockWebhookResponse));
     });
 
