@@ -53,9 +53,9 @@ const transformToApiMember = (member: DbMember, contracts: ApiContract[]): ApiMe
     .orDefault(false);
 
   const calculatedStatus = (): string => {
-    if (cancelled) return memberStatusSchema.Enum.cancelled;
-    if (isBlocked || isOverdue || suspended) return memberStatusSchema.Enum.frozen;
-    return memberStatusSchema.Enum.active;
+    if (cancelled) return memberStatusSchema.enum.cancelled;
+    if (isBlocked || isOverdue || suspended) return memberStatusSchema.enum.frozen;
+    return memberStatusSchema.enum.active;
   };
 
   const status = calculatedStatus();
