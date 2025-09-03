@@ -1,4 +1,5 @@
 import { z } from "zod";
+
 const messageSchema = z.object({
   memberId: z.string(),
   eventType: z.string(),

@@ -12,6 +12,7 @@
     "remove": "sls remove",
     "format": "biome format --write",
     "lint": "biome lint --write",
+    "check": "biome check --write",
     "test": "vitest run",
     "test_ui": "vitest --ui",
     "test_coverage": "vitest run --coverage",
