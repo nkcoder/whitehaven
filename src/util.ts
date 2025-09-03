@@ -14,10 +14,14 @@ const convertKeysToSnakeCase = (obj: PlainObject): PlainObject => {
     return obj.map(convertKeysToSnakeCase);
   }
 
-  return Object.entries(obj).reduce((acc, [key, value]) => {
-    const newKey = changeCase.snakeCase(key);
-    return { ...acc, [newKey]: convertKeysToSnakeCase(value) };
-  }, {});
+  return Object.entries(obj).reduce(
+    (acc, [key, value]) => {
+      const newKey = changeCase.snakeCase(key);
+      acc[newKey] = convertKeysToSnakeCase(value);
+      return acc;
+    },
+    {} as Record<string, PlainObject>
+  );
 };
 
 const getQueueUrlByArn = (queueArn: string): string => {
