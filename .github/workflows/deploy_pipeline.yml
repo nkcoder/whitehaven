@@ -12,6 +12,8 @@ jobs:
 
   deploy_to_dev:
     needs: run_tests
+    # Enable when required.
+    if: false
     uses: ./.github/workflows/deploy.yml
     permissions:
       id-token: write
@@ -24,6 +26,8 @@ jobs:
 
   deploy_to_prod:
     needs: deploy_to_dev
+    # Enable when required
+    if: false
     uses: ./.github/workflows/deploy.yml
     permissions:
       id-token: write
