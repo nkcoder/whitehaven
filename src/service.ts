@@ -4,16 +4,16 @@ import { getContracts, getMember } from "./database.js";
 import { getEarlierDateTime, toDate, todayDate } from "./datetime.js";
 import { eventTypes } from "./eventTypes.js";
 import {
-  ApiContract,
+  type ApiContract,
   apiContractSchema,
-  ApiMember,
+  type ApiMember,
   apiMemberSchema,
   contractStatusSchema,
-  DbContract,
-  DbMember,
+  type DbContract,
+  type DbMember,
   memberStatusSchema,
-  Message,
-  WebhookMemberData,
+  type Message,
+  type WebhookMemberData,
   webhookMemberDataSchema
 } from "./schema.js";
 import { getClient } from "./sqsClient.js";

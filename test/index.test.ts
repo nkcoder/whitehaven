@@ -1,9 +1,9 @@
-import { SQSEvent } from "aws-lambda";
+import type { SQSEvent } from "aws-lambda";
 import { EitherAsync } from "purify-ts";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { eventTypes } from "../src/eventTypes.js";
 import { handler } from "../src/index.js";
-import { Message } from "../src/schema.js";
+import type { Message } from "../src/schema.js";
 import { processMessage } from "../src/service.js";
 
 // Mock the dependencies

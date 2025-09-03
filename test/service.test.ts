@@ -1,10 +1,10 @@
-import { SQSClient } from "@aws-sdk/client-sqs";
+import type { SQSClient } from "@aws-sdk/client-sqs";
 import { beforeEach } from "node:test";
 import { EitherAsync, Left } from "purify-ts";
 import { describe, expect, it, vi } from "vitest";
 import { getContracts, getMember } from "../src/database.js";
 import { eventTypes } from "../src/eventTypes.js";
-import { DbContract, DbMember, memberStatusSchema, Message, WebhookMemberData } from "../src/schema.js";
+import { type DbContract, type DbMember, memberStatusSchema, type Message, type WebhookMemberData } from "../src/schema.js";
 import { processMessage } from "../src/service.js";
 import { getClient } from "../src/sqsClient.js";
 import { callMemberWebhook } from "../src/webhook.js";

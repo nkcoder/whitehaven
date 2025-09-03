@@ -1,7 +1,7 @@
 import ky from "ky";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { eventTypes } from "../src/eventTypes.js";
-import { ApiContract, ApiMember, WebhookMemberData } from "../src/schema.js";
+import type { ApiContract, ApiMember, WebhookMemberData } from "../src/schema.js";
 import { convertKeysToSnakeCase } from "../src/util.js";
 import { callMemberWebhook } from "../src/webhook.js";
 

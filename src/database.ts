@@ -1,7 +1,7 @@
 import { GetCommand, QueryCommand } from "@aws-sdk/lib-dynamodb";
 import { EitherAsync, Maybe } from "purify-ts";
 import { getClient } from "./dynamodbClient.js";
-import { DbContract, DbMember, dbContractSchema, dbMemberSchema } from "./schema.js";
+import { type DbContract, type DbMember, dbContractSchema, dbMemberSchema } from "./schema.js";
 
 const getMember = (memberId: string): EitherAsync<Error, DbMember> => {
   const memberTable = process.env.MEMBER_TABLE;
@@ -59,6 +59,7 @@ const getContracts = (memberId: string): EitherAsync<Error, DbContract[]> => {
       return items.length === 0 ? [] : items.map(contract => dbContractSchema.parse(contract));
     } catch (err) {
       const errMsg = err instanceof Error ? err.message : String(err);
+
       throw new Error(`Error retrieving contracts for memberId ${memberId}: ${errMsg}`);
     }
   });

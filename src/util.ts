@@ -25,4 +25,4 @@ const getQueueUrlByArn = (queueArn: string): string => {
   return `https://sqs.${region}.amazonaws.com/${accountId}/${queueName}`;
 };
 
-export { convertKeysToSnakeCase, getQueueUrlByArn, PlainObject };
+export { convertKeysToSnakeCase, getQueueUrlByArn, type PlainObject };

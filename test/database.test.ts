@@ -1,4 +1,4 @@
-import { DynamoDBDocumentClient, GetCommand, QueryCommand } from "@aws-sdk/lib-dynamodb";
+import { type DynamoDBDocumentClient, GetCommand, type QueryCommand } from "@aws-sdk/lib-dynamodb";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { getContracts, getMember } from "../src/database.js";
 import { getClient } from "../src/dynamodbClient.js";
